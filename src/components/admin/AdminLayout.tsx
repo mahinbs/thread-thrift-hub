@@ -156,7 +156,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </header>
 
         {/* Page content */}
-        <main className="p-6">
+        <main className="px-6 py-4">
           {children}
         </main>
       </div>
