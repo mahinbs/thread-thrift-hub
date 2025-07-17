@@ -10,6 +10,9 @@ import { Loader2, Leaf } from "lucide-react"
 const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [name, setName] = useState("")
+  const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const navigate = useNavigate()
@@ -19,23 +22,40 @@ const Login = () => {
     setIsLoading(true)
     setError("")
 
+    if (!isLogin && password !== confirmPassword) {
+      setError("Passwords don't match")
+      setIsLoading(false)
+      return
+    }
+
     // TODO: Replace with actual Supabase authentication
-    // Simulated login for demo purposes
     try {
-      if (email === "admin@eco-store.com" && password === "admin123") {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Store auth token (would be JWT in real implementation)
-        localStorage.setItem("isAuthenticated", "true")
-        localStorage.setItem("userEmail", email)
-        
-        navigate("/admin/dashboard")
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      if (isLogin) {
+        // Simulated login - accept any valid email format
+        if (email && password) {
+          localStorage.setItem("isAuthenticated", "true")
+          localStorage.setItem("userEmail", email)
+          localStorage.setItem("userName", name || email.split('@')[0])
+          navigate("/")
+        } else {
+          setError("Please enter valid credentials")
+        }
       } else {
-        setError("Invalid email or password")
+        // Simulated signup
+        if (name && email && password) {
+          localStorage.setItem("isAuthenticated", "true")
+          localStorage.setItem("userEmail", email)
+          localStorage.setItem("userName", name)
+          navigate("/")
+        } else {
+          setError("Please fill in all fields")
+        }
       }
     } catch (err) {
-      setError("Login failed. Please try again.")
+      setError(isLogin ? "Login failed. Please try again." : "Signup failed. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -50,14 +70,19 @@ const Login = () => {
             <Leaf className="h-8 w-8" />
             EcoStore
           </Link>
-          <p className="text-muted-foreground mt-2">Admin Portal</p>
+          <p className="text-muted-foreground mt-2">Join our sustainable fashion community</p>
         </div>
 
         <Card className="shadow-card border-border">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">
+              {isLogin ? "Welcome Back" : "Create Account"}
+            </CardTitle>
             <CardDescription className="text-center">
-              Enter your credentials to access the admin dashboard
+              {isLogin 
+                ? "Sign in to your account to continue shopping"
+                : "Join EcoStore and start your sustainable fashion journey"
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -68,12 +93,27 @@ const Login = () => {
                 </Alert>
               )}
               
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required={!isLogin}
+                    disabled={isLoading}
+                  />
+                </div>
+              )}
+              
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@eco-store.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -94,6 +134,21 @@ const Login = () => {
                 />
               </div>
 
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required={!isLogin}
+                    disabled={isLoading}
+                  />
+                </div>
+              )}
+
               <Button
                 type="submit"
                 className="w-full"
@@ -102,24 +157,39 @@ const Login = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    {isLogin ? "Signing in..." : "Creating account..."}
                   </>
                 ) : (
-                  "Sign In"
+                  isLogin ? "Sign In" : "Create Account"
                 )}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Demo credentials: admin@eco-store.com / admin123
-              </p>
-              <Link
-                to="/"
-                className="text-sm text-primary hover:underline inline-block mt-2"
+            <div className="mt-6 text-center space-y-4">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setIsLogin(!isLogin)
+                  setError("")
+                  setName("")
+                  setConfirmPassword("")
+                }}
+                className="text-sm text-primary hover:underline"
               >
-                Back to Store
-              </Link>
+                {isLogin 
+                  ? "Don't have an account? Sign up" 
+                  : "Already have an account? Sign in"
+                }
+              </Button>
+              
+              <div>
+                <Link
+                  to="/"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  ← Back to Store
+                </Link>
+              </div>
             </div>
           </CardContent>
         </Card>
