@@ -146,12 +146,12 @@ const EnhancedProductCard = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 bg-background text-foreground">
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1 items-start">
             {tags.slice(0, 2).map((tag, index) => (
-              <Badge key={index} variant="outline" className="text-xs px-2 py-1">
+              <Badge key={index} variant="outline" className="text-xs px-2 py-1 bg-muted text-muted-foreground border-border">
                 #{tag}
               </Badge>
             ))}
@@ -169,12 +169,12 @@ const EnhancedProductCard = ({
         {/* Sizes */}
         <div className="flex flex-wrap gap-1 items-center">
           {sizes.slice(0, 4).map((size, index) => (
-            <Badge key={index} variant="secondary" className="text-xs px-2 py-1">
+            <Badge key={index} variant="secondary" className="text-xs px-2 py-1 bg-secondary text-secondary-foreground">
               {size}
             </Badge>
           ))}
           {sizes.length > 4 && (
-            <Badge variant="secondary" className="text-xs px-2 py-1">
+            <Badge variant="secondary" className="text-xs px-2 py-1 bg-secondary text-secondary-foreground">
               +{sizes.length - 4}
             </Badge>
           )}
@@ -198,7 +198,7 @@ const EnhancedProductCard = ({
         {/* Action Button */}
         <div className="pt-1">
           <Button
-            className="w-full glass-effect hover-glow"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={(e) => {
               e.stopPropagation();
               onShowInterest?.(id);
