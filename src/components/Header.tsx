@@ -1,14 +1,21 @@
 import { Search, User, ShoppingBag, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Header = () => {
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Sync search input with URL params
+  useEffect(() => {
+    const urlSearch = searchParams.get('search') || '';
+    setSearchQuery(urlSearch);
+  }, [searchParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +77,19 @@ const Header = () => {
               placeholder="Search for clothes, brands, sizes..." 
               className="pl-10 bg-muted/50 border-border/50 focus:bg-background transition-colors" 
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchQuery(value);
+                
+                // Real-time navigation: if empty, go home; otherwise update search
+                if (!value.trim()) {
+                  navigate('/');
+                } else {
+                  const searchParams = new URLSearchParams();
+                  searchParams.set('search', value.trim());
+                  navigate(`/collections?${searchParams.toString()}`);
+                }
+              }}
               onKeyPress={handleKeyPress}
             />
             <Button 
