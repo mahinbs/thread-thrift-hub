@@ -1,8 +1,51 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Recycle, Heart, Leaf, Sparkles, TrendingUp, Globe, ArrowRight } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-clothes.jpg";
+
 const Hero = () => {
+  const { toast } = useToast();
+
+  const handleExploreAISearch = () => {
+    // Smooth scroll to the search section
+    const searchSection = document.querySelector('section:has([class*="SmartSearch"], [data-search-section])');
+    
+    if (searchSection) {
+      searchSection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    } else {
+      // Fallback: scroll to the product grid section which contains search
+      const productSection = document.querySelector('section:has([class*="ProductGrid"], [class*="product"])');
+      if (productSection) {
+        productSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    }
+
+    // Show AI search features toast
+    toast({
+      title: "AI Search Activated! 🚀",
+      description: "Try voice search, visual search, or AI-powered recommendations to find your perfect style match.",
+    });
+
+    // Add a small delay then highlight the search input
+    setTimeout(() => {
+      const searchInput = document.querySelector('input[type="text"], input[placeholder*="search" i]');
+      if (searchInput) {
+        (searchInput as HTMLInputElement).focus();
+        // Add a subtle highlight animation
+        searchInput.classList.add('animate-pulse-glow');
+        setTimeout(() => {
+          searchInput.classList.remove('animate-pulse-glow');
+        }, 2000);
+      }
+    }, 1000);
+  };
   return <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-hero neural-bg">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-30">
@@ -41,7 +84,12 @@ const Hero = () => {
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">Experience the next generation of conscious fashion with AI-powered recommendations, voice search.</p>
 
           <div className="flex flex-col sm:flex-row gap-6 mb-16 animate-slide-in-left">
-            <Button variant="eco" size="lg" className="text-xl px-12 py-8 shadow-glow hover-lift">
+            <Button 
+              variant="eco" 
+              size="lg" 
+              className="text-xl px-12 py-8 shadow-glow hover-lift"
+              onClick={handleExploreAISearch}
+            >
               Explore AI Search
               <Sparkles className="ml-3 h-6 w-6" />
             </Button>
