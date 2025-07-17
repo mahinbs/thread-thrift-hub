@@ -81,13 +81,9 @@ const Header = () => {
                 const value = e.target.value;
                 setSearchQuery(value);
                 
-                // Real-time navigation: if empty, go home; otherwise update search
-                if (!value.trim()) {
+                // Only navigate home if completely cleared
+                if (value === '') {
                   navigate('/');
-                } else {
-                  const searchParams = new URLSearchParams();
-                  searchParams.set('search', value.trim());
-                  navigate(`/collections?${searchParams.toString()}`);
                 }
               }}
               onKeyPress={handleKeyPress}
