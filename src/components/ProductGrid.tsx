@@ -11,10 +11,8 @@ import FilterSidebar from "./FilterSidebar";
 import SmartSearch from "./SmartSearch";
 import { sampleClothingItems } from "@/data/sampleClothingData";
 import { FilterOptions, ClothingItem } from "@/types/clothing";
-
 type SortOption = 'newest' | 'price-low' | 'price-high' | 'name' | 'condition';
 type ViewMode = 'grid' | 'masonry' | 'list';
-
 const initialFilters: FilterOptions = {
   categories: [],
   subcategories: [],
@@ -35,7 +33,6 @@ const initialFilters: FilterOptions = {
   sleeveType: [],
   necklineType: []
 };
-
 const ProductGrid = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterOptions>(initialFilters);
@@ -44,15 +41,15 @@ const ProductGrid = () => {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [showTrending, setShowTrending] = useState(false);
   const [recentlyViewed, setRecentlyViewed] = useState<string[]>([]);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = sampleClothingItems.filter((item) => {
+    let filtered = sampleClothingItems.filter(item => {
       // Search query filter
-      if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !item.brand.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))) {
+      if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase()) && !item.brand.toLowerCase().includes(searchQuery.toLowerCase()) && !item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))) {
         return false;
       }
 
@@ -60,7 +57,6 @@ const ProductGrid = () => {
       if (filters.categories.length > 0 && !filters.categories.includes(item.category)) {
         return false;
       }
-
       if (filters.subcategories.length > 0 && !filters.subcategories.includes(item.subCategory)) {
         return false;
       }
@@ -99,7 +95,6 @@ const ProductGrid = () => {
       if (filters.inStock && item.stockCount === 0) {
         return false;
       }
-
       return true;
     });
 
@@ -113,85 +108,73 @@ const ProductGrid = () => {
         case 'name':
           return a.title.localeCompare(b.title);
         case 'condition':
-          const conditionOrder = { 'Like New': 5, 'Excellent': 4, 'Good': 3, 'Gently Used': 2, 'Vintage': 1 };
+          const conditionOrder = {
+            'Like New': 5,
+            'Excellent': 4,
+            'Good': 3,
+            'Gently Used': 2,
+            'Vintage': 1
+          };
           return conditionOrder[b.condition] - conditionOrder[a.condition];
         case 'newest':
         default:
           return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime();
       }
     });
-
     return filtered;
   }, [searchQuery, filters, sortBy]);
-
   const handleWishlist = (id: string) => {
     setWishlist(prev => {
-      const newWishlist = prev.includes(id) 
-        ? prev.filter(item => item !== id)
-        : [...prev, id];
-      
+      const newWishlist = prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id];
       const item = sampleClothingItems.find(item => item.id === id);
       toast({
         title: prev.includes(id) ? "Removed from wishlist" : "Added to wishlist",
-        description: item?.title,
+        description: item?.title
       });
-      
       return newWishlist;
     });
   };
-
   const handleShowInterest = (id: string) => {
     const item = sampleClothingItems.find(item => item.id === id);
     toast({
       title: "Interest shown!",
-      description: `We'll contact you about "${item?.title}"`,
+      description: `We'll contact you about "${item?.title}"`
     });
   };
-
   const handleQuickView = (id: string) => {
     // Add to recently viewed
-    setRecentlyViewed(prev => [
-      id,
-      ...prev.filter(viewedId => viewedId !== id).slice(0, 9)
-    ]);
-    
+    setRecentlyViewed(prev => [id, ...prev.filter(viewedId => viewedId !== id).slice(0, 9)]);
     toast({
       title: "Quick view",
-      description: "Quick view modal would open here",
+      description: "Quick view modal would open here"
     });
   };
-
   const handleSmartSearch = (query: string) => {
     setSearchQuery(query);
   };
-
   const handleVoiceSearch = () => {
     toast({
       title: "Voice Search",
-      description: "Voice search activated! Speak your query.",
+      description: "Voice search activated! Speak your query."
     });
   };
-
   const handleVisualSearch = () => {
     toast({
       title: "Visual Search",
-      description: "Camera would open to search by image.",
+      description: "Camera would open to search by image."
     });
   };
-
   const handleAIRecommendation = () => {
     setShowTrending(!showTrending);
     toast({
       title: "AI Recommendations",
-      description: showTrending ? "Hiding trending items" : "Showing trending items based on your style!",
+      description: showTrending ? "Hiding trending items" : "Showing trending items based on your style!"
     });
   };
-
   const clearFilters = () => {
     setFilters(initialFilters);
     setSearchQuery("");
   };
-
   const getGridClassName = () => {
     switch (viewMode) {
       case 'masonry':
@@ -203,9 +186,7 @@ const ProductGrid = () => {
         return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 auto-rows-max place-items-center max-w-7xl mx-auto';
     }
   };
-
-  return (
-    <section className="py-16 bg-gradient-to-b from-background via-background/50 to-muted/20 neural-bg min-h-screen">
+  return <section className="py-16 bg-gradient-to-b from-background via-background/50 to-muted/20 neural-bg min-h-screen">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in-up">
@@ -219,17 +200,11 @@ const ProductGrid = () => {
 
         {/* Smart Search */}
         <div className="mb-8 animate-slide-in-left">
-          <SmartSearch
-            onSearch={handleSmartSearch}
-            onVoiceSearch={handleVoiceSearch}
-            onVisualSearch={handleVisualSearch}
-            onAIRecommendation={handleAIRecommendation}
-          />
+          <SmartSearch onSearch={handleSmartSearch} onVoiceSearch={handleVoiceSearch} onVisualSearch={handleVisualSearch} onAIRecommendation={handleAIRecommendation} />
         </div>
 
         {/* Trending Items Banner */}
-        {showTrending && (
-          <Card className="mb-8 p-4 bg-gradient-eco/10 border-primary/20 animate-scale-in">
+        {showTrending && <Card className="mb-8 p-4 bg-gradient-eco/10 border-primary/20 animate-scale-in">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="h-5 w-5 text-primary animate-bounce-gentle" />
               <span className="font-semibold text-primary">Trending Now</span>
@@ -238,33 +213,23 @@ const ProductGrid = () => {
             <p className="text-sm text-muted-foreground">
               AI-curated items based on current fashion trends and your browsing history
             </p>
-          </Card>
-        )}
+          </Card>}
 
         {/* Recently Viewed */}
-        {recentlyViewed.length > 0 && (
-          <Card className="mb-8 p-4 bg-muted/30 border-border/50 animate-fade-in-up">
+        {recentlyViewed.length > 0 && <Card className="mb-8 p-4 bg-muted/30 border-border/50 animate-fade-in-up">
             <div className="flex items-center gap-2 mb-3">
               <Eye className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium">Recently Viewed</span>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2">
-              {recentlyViewed.slice(0, 5).map((id) => {
-                const item = sampleClothingItems.find(item => item.id === id);
-                return item ? (
-                  <Badge
-                    key={id}
-                    variant="secondary"
-                    className="whitespace-nowrap cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors interactive"
-                    onClick={() => handleQuickView(id)}
-                  >
+              {recentlyViewed.slice(0, 5).map(id => {
+            const item = sampleClothingItems.find(item => item.id === id);
+            return item ? <Badge key={id} variant="secondary" className="whitespace-nowrap cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors interactive" onClick={() => handleQuickView(id)}>
                     {item.title}
-                  </Badge>
-                ) : null;
-              })}
+                  </Badge> : null;
+          })}
             </div>
-          </Card>
-        )}
+          </Card>}
 
         {/* Filter Controls */}
         <div className="glass-card p-6 mb-8 blur-backdrop">
@@ -288,20 +253,10 @@ const ProductGrid = () => {
 
               {/* View Mode */}
               <div className="flex border rounded-lg">
-                <Button
-                  variant={viewMode === 'masonry' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('masonry')}
-                  className="rounded-r-none"
-                >
+                <Button variant={viewMode === 'masonry' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('masonry')} className="rounded-r-none">
                   <Grid className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant={viewMode === 'list' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                  className="rounded-none border-x"
-                >
+                <Button variant={viewMode === 'list' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('list')} className="rounded-none border-x">
                   <List className="h-4 w-4" />
                 </Button>
               </div>
@@ -319,12 +274,7 @@ const ProductGrid = () => {
                     <SheetTitle>Filters</SheetTitle>
                   </SheetHeader>
                   <div className="mt-6">
-                    <FilterSidebar
-                      filters={filters}
-                      onFiltersChange={setFilters}
-                      onClear={clearFilters}
-                      itemCount={filteredAndSortedProducts.length}
-                    />
+                    <FilterSidebar filters={filters} onFiltersChange={setFilters} onClear={clearFilters} itemCount={filteredAndSortedProducts.length} />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -332,73 +282,35 @@ const ProductGrid = () => {
           </div>
 
           {/* Results Summary */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t">
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">
-                {filteredAndSortedProducts.length} items
-              </Badge>
-              {wishlist.length > 0 && (
-                <Badge variant="outline">
-                  ❤️ {wishlist.length} wishlisted
-                </Badge>
-              )}
-            </div>
-            
-            {(searchQuery || filters.categories.length > 0 || filters.sizes.length > 0) && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                Clear all filters
-              </Button>
-            )}
-          </div>
+          
         </div>
 
         {/* Main Content */}
         <div className="flex gap-8">
           {/* Desktop Filter Sidebar */}
           <div className="hidden md:block w-80 flex-shrink-0">
-            <FilterSidebar
-              filters={filters}
-              onFiltersChange={setFilters}
-              onClear={clearFilters}
-              itemCount={filteredAndSortedProducts.length}
-            />
+            <FilterSidebar filters={filters} onFiltersChange={setFilters} onClear={clearFilters} itemCount={filteredAndSortedProducts.length} />
           </div>
 
           {/* Products Grid */}
           <div className="flex-1">
-            {filteredAndSortedProducts.length === 0 ? (
-              <div className="glass-card p-12 text-center">
+            {filteredAndSortedProducts.length === 0 ? <div className="glass-card p-12 text-center">
                 <div className="text-4xl mb-4">🔍</div>
                 <h3 className="text-xl font-semibold mb-2">No items found</h3>
                 <p className="text-muted-foreground mb-6">
                   Try adjusting your filters or search terms
                 </p>
                 <Button onClick={clearFilters}>Clear all filters</Button>
-              </div>
-            ) : (
-              <div className={`${getGridClassName()} animate-fade-in-up`}>
-                {filteredAndSortedProducts.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className="w-full max-w-sm mx-auto animate-scale-in hover-neural transition-all duration-300 hover:scale-[1.02]"
-                    style={{ animationDelay: `${index * 0.05}s` }}
-                  >
-                    <EnhancedProductCard
-                      {...item}
-                      onWishlist={handleWishlist}
-                      onQuickView={handleQuickView}
-                      onShowInterest={handleShowInterest}
-                      isWishlisted={wishlist.includes(item.id)}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+              </div> : <div className={`${getGridClassName()} animate-fade-in-up`}>
+                {filteredAndSortedProducts.map((item, index) => <div key={item.id} className="w-full max-w-sm mx-auto animate-scale-in hover-neural transition-all duration-300 hover:scale-[1.02]" style={{
+              animationDelay: `${index * 0.05}s`
+            }}>
+                    <EnhancedProductCard {...item} onWishlist={handleWishlist} onQuickView={handleQuickView} onShowInterest={handleShowInterest} isWishlisted={wishlist.includes(item.id)} />
+                  </div>)}
+              </div>}
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default ProductGrid;
