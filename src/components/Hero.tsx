@@ -38,20 +38,14 @@ const Hero = () => {
             <span className="block">Fashion</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">
-            Experience the next generation of conscious fashion with AI-powered recommendations, 
-            voice search, and immersive AR try-on technology.
-          </p>
+          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">Experience the next generation of conscious fashion with AI-powered recommendations, voice search.</p>
 
           <div className="flex flex-col sm:flex-row gap-6 mb-16 animate-slide-in-left">
             <Button variant="eco" size="lg" className="text-xl px-12 py-8 shadow-glow hover-lift">
               Explore AI Search
               <Sparkles className="ml-3 h-6 w-6" />
             </Button>
-            <Button variant="outline" size="lg" className="text-xl px-12 py-8 border-white/30 bg-white/10 text-white hover:bg-white/20 hover:border-white/50 backdrop-blur-sm">
-              Try AR Fitting
-              <ArrowRight className="ml-3 h-6 w-6" />
-            </Button>
+            
           </div>
 
           {/* Enhanced Stats */}
