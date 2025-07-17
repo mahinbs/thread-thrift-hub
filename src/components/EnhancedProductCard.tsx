@@ -65,7 +65,7 @@ const EnhancedProductCard = ({
 
   return (
     <Card 
-      className="masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden h-full flex flex-col"
+      className="masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden w-full max-w-xs mx-auto flex flex-col"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => navigate(`/product/${id}`)}

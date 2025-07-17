@@ -183,7 +183,7 @@ const ProductGrid = () => {
         return 'flex flex-col gap-6 max-w-4xl mx-auto w-full';
       case 'grid':
       default:
-        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 w-full auto-rows-fr place-items-stretch';
+        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 w-full place-items-center auto-rows-fr';
     }
   };
   return <section className="py-16 bg-gradient-to-b from-background via-background/50 to-muted/20 neural-bg min-h-screen">
@@ -301,11 +301,11 @@ const ProductGrid = () => {
                   Try adjusting your filters or search terms
                 </p>
                 <Button onClick={clearFilters}>Clear all filters</Button>
-              </div> : <div className={`${getGridClassName()} animate-fade-in-up w-full`} style={{minHeight: '400px'}}>
+              </div> : <div className={`${getGridClassName()} animate-fade-in-up`} style={{minHeight: '400px'}}>
                 {filteredAndSortedProducts.map((item, index) => (
                   <div 
                     key={item.id} 
-                    className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : 'w-full h-full'} animate-scale-in transition-all duration-300`} 
+                    className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : 'w-full max-w-xs mx-auto'} animate-scale-in transition-all duration-300`} 
                     style={{
                       animationDelay: `${index * 0.05}s`
                     }}
