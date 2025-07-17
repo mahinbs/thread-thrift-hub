@@ -66,13 +66,13 @@ const Hero = () => {
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2 animate-bounce-gentle" style={{
               animationDelay: '0.2s'
             }}>98%</div>
-              <div className="text-white font-semibold">Satisfaction Rate</div>
+              <div className="text-black font-semibold">Satisfaction Rate</div>
             </Card>
             <Card className="text-center p-6 glass-effect hover-neural">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2 animate-bounce-gentle" style={{
               animationDelay: '0.4s'
             }}>50K+</div>
-              <div className="text-white font-semibold">CO2 Saved (kg)</div>
+              <div className="text-black font-semibold">CO2 Saved (kg)</div>
             </Card>
           </div>
 
@@ -80,22 +80,9 @@ const Hero = () => {
           <div className="flex flex-wrap justify-center md:justify-start gap-6 text-white/80 animate-fade-in-up" style={{
           animationDelay: '0.8s'
         }}>
-            <Card className="flex items-center space-x-3 p-4 glass-effect hover-glow interactive">
-              <TrendingUp className="h-6 w-6 text-primary animate-bounce-gentle" />
-              <span className="font-medium">AI Trends</span>
-            </Card>
-            <Card className="flex items-center space-x-3 p-4 glass-effect hover-glow interactive">
-              <Globe className="h-6 w-6 text-primary animate-bounce-gentle" style={{
-              animationDelay: '0.5s'
-            }} />
-              <span className="font-medium">Global Community</span>
-            </Card>
-            <Card className="flex items-center space-x-3 p-4 glass-effect hover-glow interactive">
-              <Leaf className="h-6 w-6 text-primary animate-bounce-gentle" style={{
-              animationDelay: '1s'
-            }} />
-              <span className="font-medium">Blockchain Verified</span>
-            </Card>
+            
+            
+            
           </div>
         </div>
       </div>
