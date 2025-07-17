@@ -7,6 +7,9 @@ import Index from "./pages/Index";
 import Sell from "./pages/Sell";
 import Login from "./pages/Login";
 import Dashboard from "./pages/admin/Dashboard";
+import AddItem from "./pages/admin/AddItem";
+import Inventory from "./pages/admin/Inventory";
+import Settings from "./pages/admin/Settings";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Collections from "./pages/Collections";
 import NotFound from "./pages/NotFound";
@@ -27,6 +30,21 @@ const App = () => (
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/add-item" element={
+            <ProtectedRoute>
+              <AddItem />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/inventory" element={
+            <ProtectedRoute>
+              <Inventory />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/settings" element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
