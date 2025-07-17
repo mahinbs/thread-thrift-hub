@@ -58,7 +58,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const userEmail = localStorage.getItem("userEmail")
 
   return (
-    <div className="min-h-screen bg-gradient-subtle backdrop-blur-sm">
+    <div className="min-h-screen bg-gradient-subtle">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 

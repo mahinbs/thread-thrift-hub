@@ -143,7 +143,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
           onChange={handleInputChange}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           onFocus={() => query.length > 0 && setShowSuggestions(true)}
-          className="pl-10 pr-32 h-12 text-base border-2 border-border/50 focus:border-primary/50 rounded-xl bg-background/50 backdrop-blur-sm transition-all duration-300 hover:shadow-soft focus:shadow-glow"
+          className="pl-10 pr-32 h-12 text-base border-2 border-border/50 focus:border-primary/50 rounded-xl bg-background/90 transition-all duration-300 hover:shadow-soft focus:shadow-glow"
         />
         
         {/* Clear button */}
@@ -195,7 +195,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
 
       {/* Suggestions dropdown */}
       {showSuggestions && (suggestions.length > 0 || recentSearches.length > 0) && (
-        <Card className="absolute top-14 left-0 right-0 z-50 p-4 shadow-neural border-border/50 bg-background/95 backdrop-blur-xl animate-fade-in-up">
+        <Card className="absolute top-14 left-0 right-0 z-50 p-4 shadow-neural border-border/50 bg-background/95 animate-fade-in-up">
           {/* AI Suggestions */}
           {suggestions.length > 0 && (
             <div className="mb-4">
