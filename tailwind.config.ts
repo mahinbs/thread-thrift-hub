@@ -65,21 +65,19 @@ export default {
 				}
 			},
 			backgroundImage: {
-				'gradient-eco': 'var(--gradient-eco)',
-				'gradient-earth': 'var(--gradient-earth)',
-				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-cyber': 'var(--gradient-cyber)',
+				'gradient-neon': 'var(--gradient-neon)',
+				'gradient-neural': 'var(--gradient-neural)',
 				'gradient-glass': 'var(--gradient-glass)',
-				'gradient-glass-dark': 'var(--gradient-glass-dark)',
-				'gradient-shimmer': 'var(--gradient-shimmer)',
-				'gradient-neural': 'var(--gradient-neural)'
+				'gradient-hologram': 'var(--gradient-hologram)',
+				'gradient-data': 'var(--gradient-data)'
 			},
 			boxShadow: {
-				'soft': 'var(--shadow-soft)',
-				'card': 'var(--shadow-card)',
-				'hover': 'var(--shadow-hover)',
-				'glass': 'var(--shadow-glass)',
-				'glow': 'var(--shadow-glow)',
-				'neural': 'var(--shadow-neural)'
+				'neon': 'var(--shadow-neon)',
+				'cyber': 'var(--shadow-cyber)',
+				'neural': 'var(--shadow-neural)',
+				'hologram': 'var(--shadow-hologram)',
+				'data': 'var(--shadow-data)'
 			},
 			backdropBlur: {
 				'glass': '20px'
@@ -130,9 +128,27 @@ export default {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-2px)' }
 				},
-				'pulse-glow': {
-					'0%, 100%': { boxShadow: '0 0 20px hsl(var(--primary) / 0.3)' },
-					'50%': { boxShadow: '0 0 40px hsl(var(--primary) / 0.6)' }
+				'pulse-cyber': {
+					'0%, 100%': { 
+						boxShadow: '0 0 20px hsl(var(--primary) / 0.3)',
+						transform: 'scale(1)'
+					},
+					'50%': { 
+						boxShadow: '0 0 40px hsl(var(--primary) / 0.6), 0 0 60px hsl(var(--accent) / 0.4)',
+						transform: 'scale(1.02)'
+					}
+				},
+				'hologram-shift': {
+					'0%, 100%': { backgroundPosition: '0% 50%' },
+					'50%': { backgroundPosition: '100% 50%' }
+				},
+				'data-flow': {
+					'0%, 100%': { backgroundPosition: '0% 0%' },
+					'50%': { backgroundPosition: '100% 100%' }
+				},
+				'data-stream': {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(100%)' }
 				}
 			},
 			animation: {
@@ -144,7 +160,10 @@ export default {
 				'slide-in-left': 'slide-in-left 0.5s ease-out',
 				'scale-in': 'scale-in 0.3s ease-out',
 				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 3s ease-in-out infinite'
+				'pulse-cyber': 'pulse-cyber 2s ease-in-out infinite',
+				'hologram-shift': 'hologram-shift 4s ease-in-out infinite',
+				'data-flow': 'data-flow 6s ease-in-out infinite',
+				'data-stream': 'data-stream 3s linear infinite'
 			}
 		}
 	},
