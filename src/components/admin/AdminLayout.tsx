@@ -90,7 +90,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
+          <nav className="px-4 py-4 space-y-1">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
@@ -111,7 +111,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </nav>
 
           {/* User info & logout */}
-          <div className="border-t border-border p-4">
+          <div className="mt-auto border-t border-border p-4">
             <div className="mb-3">
               <p className="text-sm font-medium">{userEmail}</p>
               <p className="text-xs text-muted-foreground">Administrator</p>
