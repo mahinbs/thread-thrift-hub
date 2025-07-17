@@ -8,113 +8,123 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Futuristic admin color palette */
-    --background: 225 15% 4%;
-    --foreground: 210 40% 98%;
-
-    --card: 225 25% 6%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 225 25% 6%;
-    --popover-foreground: 210 40% 98%;
-
-    /* Cyberpunk blue primary */
-    --primary: 217 91% 60%;
-    --primary-foreground: 225 15% 4%;
-    --primary-glow: 217 100% 70%;
-
-    /* Tech purple secondary */
-    --secondary: 262 83% 58%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 225 15% 10%;
-    --muted-foreground: 217 19% 60%;
-
-    /* Neon accent */
-    --accent: 158 64% 52%;
-    --accent-foreground: 225 15% 4%;
-
-    --destructive: 0 75% 60%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 225 15% 15%;
-    --input: 225 15% 12%;
-    --ring: 217 91% 60%;
-
-    /* Advanced design system tokens */
-    --gradient-cyber: linear-gradient(135deg, hsl(217 91% 60%), hsl(262 83% 58%));
-    --gradient-neon: linear-gradient(135deg, hsl(158 64% 52%), hsl(217 91% 60%));
-    --gradient-neural: radial-gradient(circle at 30% 30%, hsl(217 91% 60% / 0.3) 0%, transparent 50%), 
-                      radial-gradient(circle at 70% 70%, hsl(262 83% 58% / 0.3) 0%, transparent 50%),
-                      radial-gradient(circle at 50% 90%, hsl(158 64% 52% / 0.2) 0%, transparent 50%);
-    --gradient-glass: linear-gradient(135deg, hsl(217 91% 60% / 0.1), hsl(225 25% 6% / 0.8));
-    --gradient-hologram: linear-gradient(45deg, hsl(217 91% 60% / 0.2), hsl(262 83% 58% / 0.2), hsl(158 64% 52% / 0.2));
-    --gradient-data: conic-gradient(from 0deg, hsl(217 91% 60%), hsl(262 83% 58%), hsl(158 64% 52%), hsl(217 91% 60%));
-    
-    --shadow-neon: 0 0 20px hsl(217 91% 60% / 0.5), 0 0 40px hsl(217 91% 60% / 0.3);
-    --shadow-cyber: 0 4px 30px hsl(217 91% 60% / 0.2), 0 2px 15px hsl(262 83% 58% / 0.1);
-    --shadow-neural: 0 8px 50px hsl(217 91% 60% / 0.15), 0 20px 80px hsl(225 15% 4% / 0.8);
-    --shadow-hologram: 0 4px 25px hsl(158 64% 52% / 0.2), inset 0 1px 0 hsl(217 91% 60% / 0.1);
-    --shadow-data: 0 0 30px hsl(217 91% 60% / 0.3), 0 0 60px hsl(262 83% 58% / 0.2);
-    
-    --transition-cyber: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-neural: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --transition-hologram: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    
-    /* Glass effect variables */
-    --glass-border: hsl(217 91% 60% / 0.3);
-    --glass-bg: hsl(225 25% 6% / 0.7);
-    --glass-backdrop: blur(20px) saturate(180%);
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 225 20% 5%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 225 15% 4%;
-    --sidebar-accent: 225 15% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 225 15% 15%;
-    --sidebar-ring: 217 91% 60%;
-  }
-
-  .light {
-    --background: 210 20% 98%;
-    --foreground: 225 15% 15%;
+    /* Sustainable fashion color palette */
+    --background: 35 20% 98%;
+    --foreground: 25 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 225 15% 15%;
+    --card-foreground: 25 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 225 15% 15%;
+    --popover-foreground: 25 15% 15%;
 
-    --primary: 217 91% 60%;
+    /* Eco-friendly green primary */
+    --primary: 142 65% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 217 100% 70%;
+    --primary-glow: 142 55% 65%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 225 15% 15%;
+    /* Warm earth secondary */
+    --secondary: 35 25% 92%;
+    --secondary-foreground: 25 15% 15%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 35 15% 95%;
+    --muted-foreground: 25 10% 55%;
 
-    --accent: 210 20% 96%;
-    --accent-foreground: 225 15% 15%;
+    /* Sustainable accent */
+    --accent: 180 25% 85%;
+    --accent-foreground: 25 15% 15%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --border: 35 20% 88%;
+    --input: 35 20% 88%;
+    --ring: 142 65% 45%;
+
+    /* Design system tokens */
+    --gradient-eco: linear-gradient(135deg, hsl(142 65% 45%), hsl(142 55% 65%));
+    --gradient-earth: linear-gradient(180deg, hsl(35 25% 92%), hsl(35 15% 95%));
+    --gradient-hero: linear-gradient(135deg, hsl(142 45% 25%), hsl(142 65% 45%));
+    --gradient-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
+    --gradient-glass-dark: linear-gradient(135deg, hsl(0 0% 0% / 0.1), hsl(0 0% 0% / 0.05));
+    --gradient-shimmer: linear-gradient(110deg, transparent 40%, hsl(0 0% 100% / 0.5) 50%, transparent 60%);
+    --gradient-neural: radial-gradient(circle at 20% 50%, hsl(142 65% 45% / 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 50%, hsl(142 55% 65% / 0.2) 0%, transparent 50%);
+    
+    --shadow-soft: 0 4px 20px hsl(25 15% 15% / 0.08);
+    --shadow-card: 0 2px 12px hsl(25 15% 15% / 0.12);
+    --shadow-hover: 0 8px 32px hsl(142 65% 45% / 0.15);
+    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.1);
+    --shadow-glow: 0 0 40px hsl(142 65% 45% / 0.3);
+    --shadow-neural: 0 20px 60px hsl(142 65% 45% / 0.1);
+    
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-elastic: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    /* Glass effect variables */
+    --glass-border: hsl(0 0% 100% / 0.2);
+    --glass-bg: hsl(0 0% 100% / 0.1);
+    --glass-backdrop: blur(20px);
+
+    --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
+
     --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
+
     --sidebar-accent: 240 4.8% 95.9%;
+
     --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    
+    /* Dark mode glass effects */
+    --glass-border: hsl(0 0% 100% / 0.1);
+    --glass-bg: hsl(0 0% 0% / 0.2);
+    --glass-backdrop: blur(20px);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -130,13 +140,9 @@ All colors MUST be HSL.
 }
 
 @layer components {
-  /* Futuristic glass effect utility classes */
-  .cyber-card {
-    @apply bg-card/90 backdrop-blur-xl border border-primary/20 shadow-cyber;
-  }
-  
-  .neural-card {
-    @apply bg-gradient-neural backdrop-blur-xl border border-primary/30 shadow-neural;
+  /* Glass effect utility classes */
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl border border-white/20 shadow-glass;
   }
   
   .glass-effect {
@@ -145,90 +151,81 @@ All colors MUST be HSL.
     border: 1px solid var(--glass-border);
   }
   
-  /* Advanced grid layouts */
-  .neural-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+  /* Masonry grid styles */
+  .masonry-grid {
+    columns: 1;
+    column-gap: 1.5rem;
+    break-inside: avoid;
   }
   
-  /* Holographic effects */
-  .hologram {
-    @apply bg-gradient-hologram backdrop-blur-lg border border-primary/40 shadow-hologram;
-    background-size: 200% 200%;
-    animation: hologram-shift 4s ease-in-out infinite;
+  @media (min-width: 640px) {
+    .masonry-grid {
+      columns: 2;
+    }
   }
   
-  .data-viz {
-    @apply bg-gradient-data shadow-data;
-    background-size: 300% 300%;
-    animation: data-flow 6s ease-in-out infinite;
+  @media (min-width: 1024px) {
+    .masonry-grid {
+      columns: 3;
+    }
   }
   
-  /* Interactive hover effects */
-  .hover-cyber {
-    @apply transition-all duration-300 hover:shadow-neon hover:border-primary/60 hover:scale-[1.02];
+  @media (min-width: 1280px) {
+    .masonry-grid {
+      columns: 4;
+    }
+  }
+  
+  .masonry-item {
+    @apply break-inside-avoid mb-6;
+  }
+  
+  /* Advanced hover effects */
+  .hover-lift {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-hover;
+  }
+  
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-glow;
   }
   
   .hover-neural {
-    @apply transition-all duration-500 hover:shadow-neural hover:scale-[1.01] hover:bg-gradient-neural;
+    @apply transition-all duration-500 hover:shadow-neural hover:scale-[1.02];
   }
   
-  .hover-hologram {
-    @apply transition-all duration-300 hover:shadow-hologram hover:bg-gradient-hologram;
+  /* Shimmer effect for loading states */
+  .shimmer {
+    @apply relative overflow-hidden;
   }
   
-  /* Cyberpunk scan lines */
-  .scan-lines::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      transparent 50%,
-      hsl(var(--primary) / 0.03) 50%,
-      hsl(var(--primary) / 0.05) 51%,
-      transparent 52%
-    );
-    background-size: 100% 4px;
-    pointer-events: none;
-  }
-  
-  /* Data stream animation */
-  .data-stream {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .data-stream::before {
+  .shimmer::before {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(var(--primary) / 0.2),
-      hsl(var(--accent) / 0.3),
-      transparent
-    );
-    animation: data-stream 3s linear infinite;
+    background: var(--gradient-shimmer);
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Neural network background effect */
+  .neural-bg {
+    background: var(--gradient-neural);
+  }
+  
+  /* Advanced blur effects */
+  .blur-backdrop {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
   }
   
   /* Interactive elements */
-  .interactive-cyber {
-    @apply transition-all duration-300 cursor-pointer hover:scale-[1.02] active:scale-[0.98] hover:shadow-neon;
+  .interactive {
+    @apply transition-all duration-300 cursor-pointer hover:scale-[1.02] active:scale-[0.98];
   }
   
-  .pulse-cyber {
-    animation: pulse-cyber 2s ease-in-out infinite;
-  }
-  
-  .glow-text {
-    text-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+  .pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 }

@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { 
   LayoutDashboard, 
   Package, 
@@ -9,10 +10,7 @@ import {
   LogOut, 
   Menu,
   X,
-  Zap,
-  Activity,
-  Brain,
-  Database
+  Leaf
 } from "lucide-react"
 
 interface AdminLayoutProps {
@@ -21,14 +19,8 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [currentTime, setCurrentTime] = useState(new Date())
   const navigate = useNavigate()
   const location = useLocation()
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-    return () => clearInterval(timer)
-  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated")
@@ -38,177 +30,120 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const navigationItems = [
     {
-      name: "Neural Hub",
+      name: "Dashboard",
       href: "/admin/dashboard",
-      icon: Brain,
-      current: location.pathname === "/admin/dashboard",
-      description: "AI-powered analytics"
+      icon: LayoutDashboard,
+      current: location.pathname === "/admin/dashboard"
     },
     {
-      name: "Data Forge",
+      name: "Add Item",
       href: "/admin/add-item",
       icon: Plus,
-      current: location.pathname === "/admin/add-item",
-      description: "Create new entries"
+      current: location.pathname === "/admin/add-item"
     },
     {
-      name: "Quantum Store",
+      name: "Inventory",
       href: "/admin/inventory",
-      icon: Database,
-      current: location.pathname === "/admin/inventory",
-      description: "Inventory matrix"
+      icon: Package,
+      current: location.pathname === "/admin/inventory"
     },
     {
-      name: "System Core",
+      name: "Settings",
       href: "/admin/settings",
       icon: Settings,
-      current: location.pathname === "/admin/settings",
-      description: "Core configuration"
+      current: location.pathname === "/admin/settings"
     }
   ]
 
   const userEmail = localStorage.getItem("userEmail")
 
   return (
-    <div className="min-h-screen bg-background neural-bg">
-      {/* Cyberpunk scan lines overlay */}
-      <div className="fixed inset-0 scan-lines pointer-events-none opacity-30" />
-      
+    <div className="min-h-screen bg-gradient-subtle backdrop-blur-sm">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Futuristic Sidebar */}
+      {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-80 bg-sidebar/95 backdrop-blur-xl border-r border-primary/20 
-        transform transition-all duration-500 ease-out lg:translate-x-0 lg:static lg:inset-0
+        fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        shadow-neon
       `}>
-        <div className="flex h-full flex-col relative">
-          {/* Animated background pattern */}
-          <div className="absolute inset-0 bg-gradient-neural opacity-20" />
-          
-          {/* Logo Header */}
-          <div className="relative flex items-center justify-between h-20 px-6 border-b border-primary/20">
-            <Link to="/" className="flex items-center gap-3 text-xl font-bold text-primary hover-cyber group">
-              <div className="relative">
-                <Zap className="h-8 w-8 animate-pulse-cyber" />
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/40 transition-all duration-300" />
-              </div>
-              <div className="flex flex-col">
-                <span className="glow-text">EcoStore</span>
-                <span className="text-xs text-muted-foreground">Neural Admin</span>
-              </div>
+        <div className="flex h-full flex-col">
+          {/* Logo */}
+          <div className="flex items-center justify-between h-16 px-6 border-b border-border">
+            <Link to="/" className="flex items-center gap-2 text-xl font-bold text-primary">
+              <Leaf className="h-6 w-6" />
+              EcoStore Admin
             </Link>
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden hover:bg-primary/10 hover:text-primary border border-primary/20"
+              className="lg:hidden"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
 
-          {/* System Status */}
-          <div className="relative px-6 py-4 border-b border-primary/10">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <Activity className="h-4 w-4 text-accent animate-pulse" />
-                <span className="text-muted-foreground">System Status</span>
-              </div>
-              <span className="text-accent font-mono">ONLINE</span>
-            </div>
-            <div className="mt-2 text-xs text-muted-foreground font-mono">
-              {currentTime.toLocaleTimeString()}
-            </div>
-          </div>
-
           {/* Navigation */}
-          <nav className="relative px-4 py-6 space-y-2 flex-1">
-            {navigationItems.map((item, index) => (
+          <nav className="px-4 py-4 space-y-1">
+            {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 className={`
-                  group relative flex flex-col gap-1 px-4 py-4 rounded-xl transition-all duration-300
+                  flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors
                   ${item.current 
-                    ? 'bg-primary/20 text-primary border border-primary/30 shadow-neon' 
-                    : 'text-muted-foreground hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20'
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   }
-                  hover-cyber
                 `}
                 onClick={() => setSidebarOpen(false)}
               >
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <item.icon className={`h-5 w-5 ${item.current ? 'animate-pulse-cyber' : ''}`} />
-                    {item.current && (
-                      <div className="absolute inset-0 bg-primary/30 rounded-full blur-lg" />
-                    )}
-                  </div>
-                  <span className="font-semibold">{item.name}</span>
-                </div>
-                <span className="text-xs ml-8 opacity-70">{item.description}</span>
-                
-                {/* Data stream animation for active item */}
-                {item.current && (
-                  <div className="absolute inset-0 data-stream rounded-xl opacity-30" />
-                )}
+                <item.icon className="h-4 w-4" />
+                {item.name}
               </Link>
             ))}
           </nav>
 
-          {/* User Profile & Logout */}
-          <div className="relative border-t border-primary/20 p-6">
-            <div className="neural-card rounded-xl p-4">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-cyber flex items-center justify-center">
-                  <span className="text-sm font-bold text-primary-foreground">
-                    {userEmail?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">{userEmail}</p>
-                  <p className="text-xs text-accent">Neural Administrator</p>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full bg-destructive/10 border-destructive/30 text-destructive hover:bg-destructive/20 hover:border-destructive/50"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Disconnect
-              </Button>
+          {/* User info & logout */}
+          <div className="mt-auto border-t border-border p-4">
+            <div className="mb-3">
+              <p className="text-sm font-medium">{userEmail}</p>
+              <p className="text-xs text-muted-foreground">Administrator</p>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="lg:pl-80 min-h-screen">
+      {/* Main content */}
+      <div className="lg:pl-64 min-h-screen">
         {/* Mobile menu button - positioned absolutely */}
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
-          className="lg:hidden fixed top-6 right-6 z-10 cyber-card hover-cyber"
+          className="lg:hidden fixed top-4 right-4 z-10"
           onClick={() => setSidebarOpen(true)}
         >
           <Menu className="h-4 w-4" />
         </Button>
 
         {/* Page content */}
-        <main className="px-8 py-8 relative">
-          <div className="relative z-10">
-            {children}
-          </div>
+        <main className="px-6 py-6">
+          {children}
         </main>
       </div>
     </div>
