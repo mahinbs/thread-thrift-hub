@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import AdminLayout from "@/components/admin/AdminLayout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -59,7 +60,9 @@ const mockItems = [
 
 const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("")
-  const [items] = useState(mockItems)
+  const [items, setItems] = useState(mockItems)
+  const [showFilter, setShowFilter] = useState(false)
+  const navigate = useNavigate()
 
   const filteredItems = items.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -71,6 +74,24 @@ const Dashboard = () => {
     availableItems: items.filter(item => item.status === "Available").length,
     soldItems: items.filter(item => item.status === "Sold").length,
     totalRevenue: items.filter(item => item.status === "Sold").reduce((sum, item) => sum + item.price, 0)
+  }
+
+  const handleAddItem = () => {
+    navigate("/admin/add-item")
+  }
+
+  const handleViewItem = (itemId: number) => {
+    alert(`Viewing item ${itemId}`)
+  }
+
+  const handleEditItem = (itemId: number) => {
+    navigate("/admin/inventory")
+  }
+
+  const handleDeleteItem = (itemId: number) => {
+    if (confirm("Are you sure you want to delete this item?")) {
+      setItems(items.filter(item => item.id !== itemId))
+    }
   }
 
   const getStatusBadge = (status: string) => {
