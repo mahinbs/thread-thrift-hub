@@ -1,6 +1,7 @@
 import { Search, User, ShoppingBag, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -32,13 +33,17 @@ const Header = () => {
           <Button variant="ghost" size="sm" className="hidden md:flex">
             Sell
           </Button>
-          <Button variant="outline" size="sm">
-            <User className="h-4 w-4" />
-            <span className="hidden sm:inline ml-2">Login</span>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/login">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Login</span>
+            </Link>
           </Button>
-          <Button variant="eco" size="sm">
-            <ShoppingBag className="h-4 w-4" />
-            <span className="hidden sm:inline ml-2">Admin</span>
+          <Button variant="eco" size="sm" asChild>
+            <Link to="/admin/dashboard">
+              <ShoppingBag className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">Admin</span>
+            </Link>
           </Button>
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-4 w-4" />
