@@ -102,7 +102,7 @@ const EnhancedProductCard = ({
           )}
           
           {/* Overlay Actions */}
-          <div className={`absolute inset-0 bg-black/40 flex items-center justify-center gap-2 transition-opacity duration-300 ${
+          <div className={`absolute inset-0 bg-black/60 flex items-center justify-center gap-2 transition-opacity duration-300 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}>
             <Button
