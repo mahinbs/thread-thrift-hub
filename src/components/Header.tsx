@@ -1,8 +1,58 @@
 import { Search, User, ShoppingBag, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+
 const Header = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!searchQuery.trim()) {
+      toast({
+        title: "Search Query Required",
+        description: "Please enter something to search for.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Navigate to collections page with search parameter
+    const searchParams = new URLSearchParams();
+    searchParams.set('search', searchQuery.trim());
+    
+    // Add some intelligent search routing based on keywords
+    if (searchQuery.toLowerCase().includes('dress')) {
+      searchParams.set('category', 'womens-dresses');
+    } else if (searchQuery.toLowerCase().includes('shirt') || searchQuery.toLowerCase().includes('formal')) {
+      searchParams.set('category', 'mens-formal');
+    } else if (searchQuery.toLowerCase().includes('jeans') || searchQuery.toLowerCase().includes('denim')) {
+      searchParams.set('category', 'mens-denim');
+    } else if (searchQuery.toLowerCase().includes('traditional') || searchQuery.toLowerCase().includes('kurti')) {
+      searchParams.set('category', 'womens-traditional');
+    }
+
+    navigate(`/collections?${searchParams.toString()}`);
+    
+    toast({
+      title: "Searching...",
+      description: `Finding results for "${searchQuery}"`,
+    });
+
+    // Clear search after submission
+    setSearchQuery("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch(e as any);
+    }
+  };
   return <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
@@ -13,10 +63,25 @@ const Header = () => {
 
         {/* Search Bar - Hidden on mobile */}
         <div className="hidden md:flex flex-1 max-w-md mx-8">
-          <div className="relative w-full">
+          <form onSubmit={handleSearch} className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input type="search" placeholder="Search for clothes, brands, sizes..." className="pl-10 bg-muted/50 border-border/50 focus:bg-background transition-colors" />
-          </div>
+            <Input 
+              type="search" 
+              placeholder="Search for clothes, brands, sizes..." 
+              className="pl-10 bg-muted/50 border-border/50 focus:bg-background transition-colors" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+            <Button 
+              type="submit" 
+              size="sm" 
+              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
+              variant="ghost"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+          </form>
         </div>
 
         {/* Navigation */}
