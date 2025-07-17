@@ -1,13 +1,14 @@
 import { useState, useMemo } from "react";
-import { Search, Grid, List, SlidersHorizontal } from "lucide-react";
+import { Grid, List, SlidersHorizontal, Sparkles, TrendingUp, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import EnhancedProductCard from "./EnhancedProductCard";
 import FilterSidebar from "./FilterSidebar";
+import SmartSearch from "./SmartSearch";
 import { sampleClothingItems } from "@/data/sampleClothingData";
 import { FilterOptions, ClothingItem } from "@/types/clothing";
 
@@ -33,6 +34,8 @@ const ProductGrid = () => {
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [viewMode, setViewMode] = useState<ViewMode>('masonry');
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const [showTrending, setShowTrending] = useState(false);
+  const [recentlyViewed, setRecentlyViewed] = useState<string[]>([]);
   const { toast } = useToast();
 
   // Filter and sort products
@@ -138,9 +141,41 @@ const ProductGrid = () => {
   };
 
   const handleQuickView = (id: string) => {
+    // Add to recently viewed
+    setRecentlyViewed(prev => [
+      id,
+      ...prev.filter(viewedId => viewedId !== id).slice(0, 9)
+    ]);
+    
     toast({
       title: "Quick view",
       description: "Quick view modal would open here",
+    });
+  };
+
+  const handleSmartSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleVoiceSearch = () => {
+    toast({
+      title: "Voice Search",
+      description: "Voice search activated! Speak your query.",
+    });
+  };
+
+  const handleVisualSearch = () => {
+    toast({
+      title: "Visual Search",
+      description: "Camera would open to search by image.",
+    });
+  };
+
+  const handleAIRecommendation = () => {
+    setShowTrending(!showTrending);
+    toast({
+      title: "AI Recommendations",
+      description: showTrending ? "Hiding trending items" : "Showing trending items based on your style!",
     });
   };
 
@@ -162,32 +197,70 @@ const ProductGrid = () => {
   };
 
   return (
-    <section className="py-16 bg-muted/30 min-h-screen">
+    <section className="py-16 bg-gradient-to-b from-background via-background/50 to-muted/20 neural-bg min-h-screen">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-12 animate-fade-in-up">
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 bg-gradient-eco bg-clip-text text-transparent">
             Sustainable Fashion Collection
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover our curated selection of quality pre-loved clothing. 
-            Each piece is carefully inspected and ready for its next adventure.
+            Discover our curated selection with AI-powered search and personalized recommendations
           </p>
         </div>
 
-        {/* Search and Controls */}
-        <div className="glass-card p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name, brand, or tags..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+        {/* Smart Search */}
+        <div className="mb-8 animate-slide-in-left">
+          <SmartSearch
+            onSearch={handleSmartSearch}
+            onVoiceSearch={handleVoiceSearch}
+            onVisualSearch={handleVisualSearch}
+            onAIRecommendation={handleAIRecommendation}
+          />
+        </div>
+
+        {/* Trending Items Banner */}
+        {showTrending && (
+          <Card className="mb-8 p-4 bg-gradient-eco/10 border-primary/20 animate-scale-in">
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="h-5 w-5 text-primary animate-bounce-gentle" />
+              <span className="font-semibold text-primary">Trending Now</span>
+              <Sparkles className="h-4 w-4 text-primary" />
             </div>
+            <p className="text-sm text-muted-foreground">
+              AI-curated items based on current fashion trends and your browsing history
+            </p>
+          </Card>
+        )}
+
+        {/* Recently Viewed */}
+        {recentlyViewed.length > 0 && (
+          <Card className="mb-8 p-4 bg-muted/30 border-border/50 animate-fade-in-up">
+            <div className="flex items-center gap-2 mb-3">
+              <Eye className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Recently Viewed</span>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {recentlyViewed.slice(0, 5).map((id) => {
+                const item = sampleClothingItems.find(item => item.id === id);
+                return item ? (
+                  <Badge
+                    key={id}
+                    variant="secondary"
+                    className="whitespace-nowrap cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors interactive"
+                    onClick={() => handleQuickView(id)}
+                  >
+                    {item.title}
+                  </Badge>
+                ) : null;
+              })}
+            </div>
+          </Card>
+        )}
+
+        {/* Filter Controls */}
+        <div className="glass-card p-6 mb-8 blur-backdrop">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
 
             {/* Controls */}
             <div className="flex items-center gap-3">
@@ -295,16 +368,21 @@ const ProductGrid = () => {
                 <Button onClick={clearFilters}>Clear all filters</Button>
               </div>
             ) : (
-              <div className={getGridClassName()}>
-                {filteredAndSortedProducts.map((item) => (
-                  <EnhancedProductCard
+              <div className={`${getGridClassName()} animate-fade-in-up`}>
+                {filteredAndSortedProducts.map((item, index) => (
+                  <div
                     key={item.id}
-                    {...item}
-                    onWishlist={handleWishlist}
-                    onQuickView={handleQuickView}
-                    onShowInterest={handleShowInterest}
-                    isWishlisted={wishlist.includes(item.id)}
-                  />
+                    className="animate-scale-in hover-neural"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <EnhancedProductCard
+                      {...item}
+                      onWishlist={handleWishlist}
+                      onQuickView={handleQuickView}
+                      onShowInterest={handleShowInterest}
+                      isWishlisted={wishlist.includes(item.id)}
+                    />
+                  </div>
                 ))}
               </div>
             )}
