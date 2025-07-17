@@ -178,12 +178,12 @@ const ProductGrid = () => {
   const getGridClassName = () => {
     switch (viewMode) {
       case 'masonry':
-        return 'masonry-grid';
+        return 'columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 space-y-6';
       case 'list':
         return 'flex flex-col gap-6 max-w-4xl mx-auto';
       case 'grid':
       default:
-        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 auto-rows-max place-items-center max-w-7xl mx-auto';
+        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 justify-items-center max-w-7xl mx-auto';
     }
   };
   return <section className="py-16 bg-gradient-to-b from-background via-background/50 to-muted/20 neural-bg min-h-screen">
@@ -302,7 +302,7 @@ const ProductGrid = () => {
                 </p>
                 <Button onClick={clearFilters}>Clear all filters</Button>
               </div> : <div className={`${getGridClassName()} animate-fade-in-up`}>
-                {filteredAndSortedProducts.map((item, index) => <div key={item.id} className="w-full max-w-sm mx-auto animate-scale-in hover-neural transition-all duration-300 hover:scale-[1.02]" style={{
+                {filteredAndSortedProducts.map((item, index) => <div key={item.id} className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : 'w-full max-w-sm justify-self-center'} animate-scale-in hover-neural transition-all duration-300 hover:scale-[1.02]`} style={{
               animationDelay: `${index * 0.05}s`
             }}>
                     <EnhancedProductCard {...item} onWishlist={handleWishlist} onQuickView={handleQuickView} onShowInterest={handleShowInterest} isWishlisted={wishlist.includes(item.id)} />
