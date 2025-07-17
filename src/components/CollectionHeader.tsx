@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 import Breadcrumb from "./Breadcrumb";
 
 interface CollectionHeaderProps {
@@ -19,6 +20,7 @@ const CollectionHeader = ({
   onSearchChange,
   itemCount 
 }: CollectionHeaderProps) => {
+  const navigate = useNavigate();
   const breadcrumbItems = [
     { label: "Collections", href: "/" },
     { label: title }
@@ -49,7 +51,15 @@ const CollectionHeader = ({
                 type="text"
                 placeholder={`Search in ${title.toLowerCase()}...`}
                 value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  onSearchChange(value);
+                  
+                  // Navigate home if search is cleared
+                  if (!value.trim()) {
+                    navigate('/');
+                  }
+                }}
                 className="pl-10"
               />
             </div>
