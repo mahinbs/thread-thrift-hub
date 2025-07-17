@@ -130,9 +130,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 min-h-screen flex flex-col">
         {/* Top bar */}
-        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
+        <header className="h-14 bg-card border-b border-border flex items-center justify-between px-6">
           <Button
             variant="ghost"
             size="sm"
@@ -156,7 +156,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </header>
 
         {/* Page content */}
-        <main className="px-6 py-4">
+        <main className="flex-1 px-6 py-3">
           {children}
         </main>
       </div>
