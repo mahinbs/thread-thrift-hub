@@ -62,15 +62,15 @@ const Hero = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
             <Card className="text-center p-6 glass-effect hover-neural">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2 animate-bounce-gentle">150K+</div>
-              <div className="text-white/70 font-medium">AI Recommendations</div>
+              <div className="text-white font-semibold">AI Recommendations</div>
             </Card>
             <Card className="text-center p-6 glass-effect hover-neural">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2 animate-bounce-gentle" style={{ animationDelay: '0.2s' }}>98%</div>
-              <div className="text-white/70 font-medium">Satisfaction Rate</div>
+              <div className="text-white font-semibold">Satisfaction Rate</div>
             </Card>
             <Card className="text-center p-6 glass-effect hover-neural">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2 animate-bounce-gentle" style={{ animationDelay: '0.4s' }}>50K+</div>
-              <div className="text-white/70 font-medium">CO2 Saved (kg)</div>
+              <div className="text-white font-semibold">CO2 Saved (kg)</div>
             </Card>
           </div>
 
