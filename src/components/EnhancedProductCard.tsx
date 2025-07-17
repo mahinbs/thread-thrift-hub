@@ -108,7 +108,7 @@ const EnhancedProductCard = ({
             <Button
               size="sm"
               variant="secondary"
-              className="glass-effect"
+              className="bg-background/95 text-foreground border border-border hover:bg-background"
               onClick={(e) => {
                 e.stopPropagation();
                 onQuickView?.(id);
