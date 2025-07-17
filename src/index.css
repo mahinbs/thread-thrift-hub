@@ -117,9 +117,6 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  }
-
-}
 
 @layer base {
   * {
@@ -233,5 +230,4 @@ All colors MUST be HSL.
   .glow-text {
     text-shadow: 0 0 10px hsl(var(--primary) / 0.5);
   }
-}
 }
