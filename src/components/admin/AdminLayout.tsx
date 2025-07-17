@@ -130,33 +130,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64 min-h-screen flex flex-col">
-        {/* Top bar */}
-        <header className="h-10 bg-card border-b border-border flex items-center justify-between px-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="h-4 w-4" />
-          </Button>
-          
-          <div className="hidden lg:block">
-            <h1 className="text-lg font-semibold">
-              {navigationItems.find(item => item.current)?.name || "Dashboard"}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
-              View Store
-            </Link>
-          </div>
-        </header>
+      <div className="lg:pl-64 min-h-screen">
+        {/* Mobile menu button - positioned absolutely */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="lg:hidden fixed top-4 right-4 z-10"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <Menu className="h-4 w-4" />
+        </Button>
 
         {/* Page content */}
-        <main className="flex-1 px-6 py-3">
+        <main className="px-6 py-6">
           {children}
         </main>
       </div>
