@@ -197,10 +197,10 @@ const ProductGrid = () => {
       case 'masonry':
         return 'masonry-grid';
       case 'list':
-        return 'flex flex-col gap-4';
+        return 'flex flex-col gap-6 max-w-4xl mx-auto';
       case 'grid':
       default:
-        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 auto-rows-max place-items-center max-w-7xl mx-auto';
     }
   };
 
@@ -380,8 +380,8 @@ const ProductGrid = () => {
                 {filteredAndSortedProducts.map((item, index) => (
                   <div
                     key={item.id}
-                    className="animate-scale-in hover-neural"
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    className="w-full max-w-sm mx-auto animate-scale-in hover-neural transition-all duration-300 hover:scale-[1.02]"
+                    style={{ animationDelay: `${index * 0.05}s` }}
                   >
                     <EnhancedProductCard
                       {...item}
