@@ -76,7 +76,7 @@ const Login = () => {
         <Card className="shadow-card border-border">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">
-              {isLogin ? "Welcome Back" : "Create Account"}
+              {isLogin ? "Customer Login" : "Create Account"}
             </CardTitle>
             <CardDescription className="text-center">
               {isLogin 
