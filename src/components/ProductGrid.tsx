@@ -178,12 +178,12 @@ const ProductGrid = () => {
   const getGridClassName = () => {
     switch (viewMode) {
       case 'masonry':
-        return 'columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 space-y-6';
+        return 'columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 space-y-0 w-full';
       case 'list':
-        return 'flex flex-col gap-6 max-w-4xl mx-auto';
+        return 'flex flex-col gap-6 max-w-4xl mx-auto w-full';
       case 'grid':
       default:
-        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 justify-items-center max-w-7xl mx-auto';
+        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 w-full auto-rows-fr place-items-stretch';
     }
   };
   return <section className="py-16 bg-gradient-to-b from-background via-background/50 to-muted/20 neural-bg min-h-screen">
@@ -301,12 +301,18 @@ const ProductGrid = () => {
                   Try adjusting your filters or search terms
                 </p>
                 <Button onClick={clearFilters}>Clear all filters</Button>
-              </div> : <div className={`${getGridClassName()} animate-fade-in-up`} style={{minHeight: '400px'}}>
-                {filteredAndSortedProducts.map((item, index) => <div key={item.id} className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : 'w-full max-w-sm justify-self-center'} animate-scale-in transition-all duration-300 hover:scale-[1.02]`} style={{
-              animationDelay: `${index * 0.05}s`
-            }}>
+              </div> : <div className={`${getGridClassName()} animate-fade-in-up w-full`} style={{minHeight: '400px'}}>
+                {filteredAndSortedProducts.map((item, index) => (
+                  <div 
+                    key={item.id} 
+                    className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : 'w-full h-full'} animate-scale-in transition-all duration-300`} 
+                    style={{
+                      animationDelay: `${index * 0.05}s`
+                    }}
+                  >
                     <EnhancedProductCard {...item} onWishlist={handleWishlist} onQuickView={handleQuickView} onShowInterest={handleShowInterest} isWishlisted={wishlist.includes(item.id)} />
-                  </div>)}
+                  </div>
+                ))}
               </div>}
           </div>
         </div>

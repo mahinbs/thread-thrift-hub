@@ -65,7 +65,7 @@ const EnhancedProductCard = ({
 
   return (
     <Card 
-      className="masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden"
+      className="masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden h-full flex flex-col"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => navigate(`/product/${id}`)}
@@ -146,7 +146,7 @@ const EnhancedProductCard = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-4 space-y-3 bg-background text-foreground">
+      <div className="p-4 space-y-3 bg-background text-foreground flex-1 flex flex-col">
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1 items-start">
@@ -196,7 +196,7 @@ const EnhancedProductCard = ({
         </div>
 
         {/* Action Button */}
-        <div className="pt-1">
+        <div className="pt-1 mt-auto">
           <Button
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={(e) => {
