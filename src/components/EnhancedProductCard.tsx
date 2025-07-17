@@ -71,10 +71,13 @@ const EnhancedProductCard = ({
       <div className="relative overflow-hidden">
         <AspectRatio ratio={3/4}>
           <img
-            src={images[currentImageIndex] || images[0]}
+            src={images[currentImageIndex] || images[0] || "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=600&fit=crop&auto=format"}
             alt={title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.src = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=600&fit=crop&auto=format";
+            }}
           />
           
           {/* Image Navigation Dots */}
