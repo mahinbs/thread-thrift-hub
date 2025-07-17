@@ -146,7 +146,7 @@ const EnhancedProductCard = ({
       <div className="p-4 space-y-3">
         {/* Tags */}
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 items-start">
             {tags.slice(0, 2).map((tag, index) => (
               <Badge key={index} variant="outline" className="text-xs px-2 py-1">
                 #{tag}
@@ -156,15 +156,15 @@ const EnhancedProductCard = ({
         )}
 
         {/* Brand and Title */}
-        <div>
-          <p className="text-sm text-muted-foreground font-medium">{brand}</p>
+        <div className="space-y-1">
+          <p className="text-sm text-muted-foreground font-medium leading-tight">{brand}</p>
           <h3 className="font-semibold text-foreground line-clamp-2 leading-tight">
             {title}
           </h3>
         </div>
 
         {/* Sizes */}
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1 items-center">
           {sizes.slice(0, 4).map((size, index) => (
             <Badge key={index} variant="secondary" className="text-xs px-2 py-1">
               {size}
@@ -178,7 +178,7 @@ const EnhancedProductCard = ({
         </div>
 
         {/* Price */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-baseline gap-2">
           <span className="text-lg font-bold text-primary">₹{price}</span>
           {originalPrice && originalPrice > price && (
             <span className="text-sm text-muted-foreground line-through">₹{originalPrice}</span>
@@ -186,28 +186,32 @@ const EnhancedProductCard = ({
         </div>
 
         {/* Condition */}
-        <Badge className={`w-fit ${getConditionColor(condition)}`} variant="outline">
-          {condition}
-        </Badge>
+        <div className="flex items-center">
+          <Badge className={`w-fit ${getConditionColor(condition)}`} variant="outline">
+            {condition}
+          </Badge>
+        </div>
 
         {/* Action Button */}
-        <Button
-          className="w-full glass-effect hover-glow"
-          onClick={(e) => {
-            e.stopPropagation();
-            onShowInterest?.(id);
-          }}
-          disabled={isOutOfStock}
-        >
-          {isOutOfStock ? (
-            'Out of Stock'
-          ) : (
-            <>
-              <Zap className="h-4 w-4 mr-2" />
-              Show Interest
-            </>
-          )}
-        </Button>
+        <div className="pt-1">
+          <Button
+            className="w-full glass-effect hover-glow"
+            onClick={(e) => {
+              e.stopPropagation();
+              onShowInterest?.(id);
+            }}
+            disabled={isOutOfStock}
+          >
+            {isOutOfStock ? (
+              'Out of Stock'
+            ) : (
+              <>
+                <Zap className="h-4 w-4 mr-2" />
+                Show Interest
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       {/* Floating Elements */}
