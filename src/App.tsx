@@ -28,6 +28,7 @@ const App = () => (
           <Route path="/sell" element={<Sell />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/collections" element={<Collections />} />
           <Route path="/collections/:category" element={<Collections />} />
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>
