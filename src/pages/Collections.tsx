@@ -200,9 +200,12 @@ const Collections = () => {
   };
 
   // Handle search-only requests (no specific category)
-  if (!category && !searchQuery.trim()) {
-    return <div>Collection not found</div>;
-  }
+  useEffect(() => {
+    if (!category && !searchQuery.trim()) {
+      // Navigate back to home when no category or search query
+      window.location.href = '/';
+    }
+  }, [category, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
