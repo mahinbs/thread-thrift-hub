@@ -232,7 +232,7 @@ const ProductGrid = () => {
           </Card>}
 
         {/* Filter Controls */}
-        <div className="glass-card p-6 mb-8 blur-backdrop">
+        <div className="bg-background/95 border border-border/50 rounded-lg p-6 mb-8 shadow-card">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
 
             {/* Controls */}
@@ -294,15 +294,15 @@ const ProductGrid = () => {
 
           {/* Products Grid */}
           <div className="flex-1">
-            {filteredAndSortedProducts.length === 0 ? <div className="glass-card p-12 text-center">
+            {filteredAndSortedProducts.length === 0 ? <div className="bg-background/95 border border-border/50 rounded-lg p-12 text-center shadow-card">
                 <div className="text-4xl mb-4">🔍</div>
                 <h3 className="text-xl font-semibold mb-2">No items found</h3>
                 <p className="text-muted-foreground mb-6">
                   Try adjusting your filters or search terms
                 </p>
                 <Button onClick={clearFilters}>Clear all filters</Button>
-              </div> : <div className={`${getGridClassName()} animate-fade-in-up`}>
-                {filteredAndSortedProducts.map((item, index) => <div key={item.id} className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : 'w-full max-w-sm justify-self-center'} animate-scale-in hover-neural transition-all duration-300 hover:scale-[1.02]`} style={{
+              </div> : <div className={`${getGridClassName()} animate-fade-in-up`} style={{minHeight: '400px'}}>
+                {filteredAndSortedProducts.map((item, index) => <div key={item.id} className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : 'w-full max-w-sm justify-self-center'} animate-scale-in transition-all duration-300 hover:scale-[1.02]`} style={{
               animationDelay: `${index * 0.05}s`
             }}>
                     <EnhancedProductCard {...item} onWishlist={handleWishlist} onQuickView={handleQuickView} onShowInterest={handleShowInterest} isWishlisted={wishlist.includes(item.id)} />

@@ -142,12 +142,13 @@ All colors MUST be HSL.
 @layer components {
   /* Glass effect utility classes */
   .glass-card {
-    @apply bg-card/90 border border-white/20 shadow-glass;
+    @apply bg-background/95 border border-border/50 rounded-lg shadow-card;
   }
   
   .glass-effect {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
+    border-radius: 0.5rem;
   }
   
   /* Masonry grid styles */
