@@ -30,8 +30,10 @@ const Header = () => {
           <Button variant="ghost" size="sm" className="hidden md:flex">
             Browse
           </Button>
-          <Button variant="ghost" size="sm" className="hidden md:flex">
-            Sell
+          <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
+            <Link to="/sell">
+              Sell
+            </Link>
           </Button>
           <Button variant="outline" size="sm" asChild>
             <Link to="/login">
