@@ -65,7 +65,7 @@ const Hero = () => {
       <div className="relative z-10 container mx-auto px-4 text-center md:text-left">
         <div className="max-w-4xl animate-fade-in-up">
           <div className="mb-6 animate-slide-in-left">
-            <Card className="inline-flex px-4 py-2 bg-primary/10 border-primary/20 animate-pulse-glow">
+            <Card className="inline-flex px-4 py-2 bg-primary/10 border-primary/20">
               <div className="flex items-center gap-2 text-primary">
                 <Sparkles className="h-4 w-4" />
                 <span className="text-sm font-medium">AI-Powered Fashion Discovery</span>
