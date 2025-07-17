@@ -87,22 +87,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Floating AI indicators */}
-      <Card className="absolute top-20 right-10 p-3 glass-effect animate-pulse-glow hidden lg:block">
-        <div className="flex items-center gap-2 text-white">
-          <Sparkles className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium">AI Analyzing Trends</span>
-        </div>
-      </Card>
-      
-      <Card className="absolute bottom-20 left-10 p-3 glass-effect animate-pulse-glow hidden lg:block" style={{
-      animationDelay: '1s'
-    }}>
-        <div className="flex items-center gap-2 text-white">
-          <TrendingUp className="h-4 w-4 text-primary" />
-          <span className="text-sm font-medium">98% Style Match</span>
-        </div>
-      </Card>
     </section>;
 };
 export default Hero;
