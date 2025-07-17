@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Sell from "./pages/Sell";
 import Login from "./pages/Login";
+import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/admin/Dashboard";
 import AddItem from "./pages/admin/AddItem";
 import Inventory from "./pages/admin/Inventory";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/sell" element={<Sell />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/collections/:category" element={<Collections />} />
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>

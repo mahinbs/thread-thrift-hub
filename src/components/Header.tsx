@@ -34,7 +34,7 @@ const Header = () => {
             </Link>
           </Button>
           <Button variant="eco" size="sm" asChild>
-            <Link to="/admin/dashboard">
+            <Link to="/admin/login">
               <ShoppingBag className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Admin</span>
             </Link>
