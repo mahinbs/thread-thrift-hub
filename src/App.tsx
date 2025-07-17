@@ -8,6 +8,7 @@ import Sell from "./pages/Sell";
 import Login from "./pages/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
+import Collections from "./pages/Collections";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/sell" element={<Sell />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/collections/:category" element={<Collections />} />
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
