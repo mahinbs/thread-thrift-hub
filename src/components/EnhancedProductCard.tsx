@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Heart, Eye, ShoppingBag, Zap, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -30,6 +31,7 @@ const EnhancedProductCard = ({
   onShowInterest,
   isWishlisted = false
 }: EnhancedProductCardProps) => {
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -66,6 +68,7 @@ const EnhancedProductCard = ({
       className="masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => navigate(`/product/${id}`)}
     >
       {/* Image Section */}
       <div className="relative overflow-hidden">

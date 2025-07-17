@@ -18,7 +18,7 @@ const Collections = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
   
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || "");
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
@@ -93,7 +93,7 @@ const Collections = () => {
   const filteredProducts = useMemo(() => {
     let products = sampleClothingItems;
 
-    // Filter by category
+    // Filter by category (only if category exists)
     if (category) {
       products = products.filter(item => item.category === category);
     }
@@ -199,7 +199,8 @@ const Collections = () => {
     return "max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 place-items-center";
   };
 
-  if (!category) {
+  // Handle search-only requests (no specific category)
+  if (!category && !searchQuery.trim()) {
     return <div>Collection not found</div>;
   }
 

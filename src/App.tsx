@@ -13,6 +13,7 @@ import Inventory from "./pages/admin/Inventory";
 import Settings from "./pages/admin/Settings";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Collections from "./pages/Collections";
+import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/collections" element={<Collections />} />
           <Route path="/collections/:category" element={<Collections />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/admin/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
