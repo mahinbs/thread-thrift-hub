@@ -12,6 +12,14 @@ import {
   FilterOptions, 
   CLOTHING_CATEGORIES, 
   POPULAR_BRANDS,
+  GENDER_OPTIONS,
+  OCCASION_OPTIONS,
+  SEASON_OPTIONS,
+  FIT_TYPE_OPTIONS,
+  PRINT_TYPE_OPTIONS,
+  STYLE_CATEGORY_OPTIONS,
+  SLEEVE_TYPE_OPTIONS,
+  NECKLINE_TYPE_OPTIONS,
   Size,
   Material,
   Condition,
@@ -25,19 +33,27 @@ interface FilterSidebarProps {
   itemCount: number;
 }
 
-const SIZES: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'];
-const MATERIALS: Material[] = ['Cotton', 'Denim', 'Polyester', 'Wool', 'Silk', 'Linen', 'Leather', 'Mixed'];
+const SIZES: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL', 'Free Size', '28', '30', '32', '34', '36', '38', '40', '42'];
+const MATERIALS: Material[] = ['Cotton', 'Denim', 'Polyester', 'Wool', 'Silk', 'Linen', 'Leather', 'Mixed', 'Velvet', 'Chiffon', 'Satin', 'Crepe', 'Georgette', 'Khadi', 'Lycra', 'Rayon'];
 const CONDITIONS: Condition[] = ['Like New', 'Excellent', 'Good', 'Gently Used', 'Vintage'];
 const STATUSES: Status[] = ['Available', 'Sold', 'Reserved'];
 
 const FilterSidebar = ({ filters, onFiltersChange, onClear, itemCount }: FilterSidebarProps) => {
   const [openSections, setOpenSections] = useState({
     categories: true,
+    gender: true,
     sizes: true,
     materials: false,
     conditions: false,
     price: true,
-    brands: false
+    brands: false,
+    occasion: false,
+    season: false,
+    fitType: false,
+    printType: false,
+    styleCategory: false,
+    sleeveType: false,
+    necklineType: false
   });
 
   const toggleSection = (section: keyof typeof openSections) => {
@@ -65,10 +81,18 @@ const FilterSidebar = ({ filters, onFiltersChange, onClear, itemCount }: FilterS
   const getActiveFiltersCount = () => {
     let count = 0;
     if (filters.categories.length > 0) count++;
+    if (filters.gender.length > 0) count++;
     if (filters.sizes.length > 0) count++;
     if (filters.materials.length > 0) count++;
     if (filters.conditions.length > 0) count++;
     if (filters.brands.length > 0) count++;
+    if (filters.occasion.length > 0) count++;
+    if (filters.season.length > 0) count++;
+    if (filters.fitType.length > 0) count++;
+    if (filters.printType.length > 0) count++;
+    if (filters.styleCategory.length > 0) count++;
+    if (filters.sleeveType.length > 0) count++;
+    if (filters.necklineType.length > 0) count++;
     if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) count++;
     return count;
   };
@@ -98,6 +122,29 @@ const FilterSidebar = ({ filters, onFiltersChange, onClear, itemCount }: FilterS
 
       <ScrollArea className="max-h-[calc(100vh-200px)]">
         <div className="space-y-6">
+          {/* Gender */}
+          <Collapsible open={openSections.gender} onOpenChange={() => toggleSection('gender')}>
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-muted/50 rounded-lg">
+              <Label className="font-medium">Gender</Label>
+              {openSections.gender ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <div className="flex flex-wrap gap-2">
+                {GENDER_OPTIONS.map(gender => (
+                  <Button
+                    key={gender}
+                    variant={filters.gender.includes(gender) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => toggleArrayFilter('gender', gender, filters.gender)}
+                    className="h-8 px-3"
+                  >
+                    {gender}
+                  </Button>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
           {/* Categories */}
           <Collapsible open={openSections.categories} onOpenChange={() => toggleSection('categories')}>
             <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-muted/50 rounded-lg">
@@ -248,6 +295,52 @@ const FilterSidebar = ({ filters, onFiltersChange, onClear, itemCount }: FilterS
                   </Label>
                 </div>
               ))}
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Style Category */}
+          <Collapsible open={openSections.styleCategory} onOpenChange={() => toggleSection('styleCategory')}>
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-muted/50 rounded-lg">
+              <Label className="font-medium">Style</Label>
+              {openSections.styleCategory ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <div className="flex flex-wrap gap-2">
+                {STYLE_CATEGORY_OPTIONS.map(style => (
+                  <Button
+                    key={style}
+                    variant={filters.styleCategory.includes(style) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => toggleArrayFilter('styleCategory', style, filters.styleCategory)}
+                    className="h-8 px-3"
+                  >
+                    {style}
+                  </Button>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Occasion */}
+          <Collapsible open={openSections.occasion} onOpenChange={() => toggleSection('occasion')}>
+            <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-muted/50 rounded-lg">
+              <Label className="font-medium">Occasion</Label>
+              {openSections.occasion ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <div className="flex flex-wrap gap-2">
+                {OCCASION_OPTIONS.map(occasion => (
+                  <Button
+                    key={occasion}
+                    variant={filters.occasion.includes(occasion) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => toggleArrayFilter('occasion', occasion, filters.occasion)}
+                    className="h-8 px-3"
+                  >
+                    {occasion}
+                  </Button>
+                ))}
+              </div>
             </CollapsibleContent>
           </Collapsible>
 

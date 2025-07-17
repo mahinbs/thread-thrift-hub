@@ -25,7 +25,15 @@ const initialFilters: FilterOptions = {
   brands: [],
   status: ['Available'],
   tags: [],
-  inStock: false
+  inStock: false,
+  gender: [],
+  occasion: [],
+  season: [],
+  fitType: [],
+  printType: [],
+  styleCategory: [],
+  sleeveType: [],
+  necklineType: []
 };
 
 const ProductGrid = () => {
