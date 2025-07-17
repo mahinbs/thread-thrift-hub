@@ -12,6 +12,8 @@ interface EnhancedProductCardProps extends ClothingItem {
   onQuickView?: (id: string) => void;
   onShowInterest?: (id: string) => void;
   isWishlisted?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 const EnhancedProductCard = ({
@@ -29,7 +31,9 @@ const EnhancedProductCard = ({
   onWishlist,
   onQuickView,
   onShowInterest,
-  isWishlisted = false
+  isWishlisted = false,
+  className,
+  style
 }: EnhancedProductCardProps) => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -65,7 +69,8 @@ const EnhancedProductCard = ({
 
   return (
     <Card 
-      className="masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden w-full max-w-xs mx-auto flex flex-col"
+      className={`card masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden ${className || ''}`}
+      style={style}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => navigate(`/product/${id}`)}
@@ -146,7 +151,7 @@ const EnhancedProductCard = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-4 space-y-3 bg-background text-foreground flex-1 flex flex-col">
+      <div className="card-content p-4 space-y-3 bg-background text-foreground">
         {/* Tags */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1 items-start">
@@ -194,27 +199,27 @@ const EnhancedProductCard = ({
             {condition}
           </Badge>
         </div>
+      </div>
 
-        {/* Action Button */}
-        <div className="pt-1 mt-auto">
-          <Button
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={(e) => {
-              e.stopPropagation();
-              onShowInterest?.(id);
-            }}
-            disabled={isOutOfStock}
-          >
-            {isOutOfStock ? (
-              'Out of Stock'
-            ) : (
-              <>
-                <Zap className="h-4 w-4 mr-2" />
-                Show Interest
-              </>
-            )}
-          </Button>
-        </div>
+      {/* Action Button */}
+      <div className="card-actions p-4 pt-0">
+        <Button
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+          onClick={(e) => {
+            e.stopPropagation();
+            onShowInterest?.(id);
+          }}
+          disabled={isOutOfStock}
+        >
+          {isOutOfStock ? (
+            'Out of Stock'
+          ) : (
+            <>
+              <Zap className="h-4 w-4 mr-2" />
+              Show Interest
+            </>
+          )}
+        </Button>
       </div>
 
       {/* Floating Elements */}

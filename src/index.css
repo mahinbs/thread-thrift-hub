@@ -227,4 +227,43 @@ All colors MUST be HSL.
   .pulse-slow {
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  /* Card Grid Layout */
+  .card-grid {
+    @apply grid gap-6 w-full;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    align-items: stretch;
+  }
+
+  @media (max-width: 640px) {
+    .card-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .card-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .card-grid {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+  }
+
+  /* Card Layout */
+  .card {
+    @apply flex flex-col justify-between h-full;
+  }
+
+  .card-content {
+    @apply flex-1;
+  }
+
+  .card-actions {
+    @apply mt-auto;
+  }
 }
