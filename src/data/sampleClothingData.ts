@@ -13,8 +13,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 35,
     originalPrice: 75,
     images: [
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1602810319428-019690571b5b?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1602810319428-019690571b5b?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Van Heusen",
     status: "Available",
@@ -46,8 +46,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 28,
     originalPrice: 60,
     images: [
-      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Levi's",
     status: "Available",
@@ -79,8 +79,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 45,
     originalPrice: 89,
     images: [
-      "https://images.unsplash.com/photo-1583338964115-9c1b770fe4b1?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1506629905607-84d42d2dd2d2?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1583338964115-9c1b770fe4b1?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1506629905607-84d42d2dd2d2?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Fabindia",
     status: "Available",
@@ -112,8 +112,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 22,
     originalPrice: 45,
     images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1583743814966-8936f37f4036?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1583743814966-8936f37f4036?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Nike",
     status: "Available",
@@ -145,8 +145,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 85,
     originalPrice: 180,
     images: [
-      "https://images.unsplash.com/photo-1594938328870-28ced99bc6aa?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1594938328870-28ced99bc6aa?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Raymond",
     status: "Available",
@@ -180,9 +180,9 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 42,
     originalPrice: 85,
     images: [
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop&auto=format"
     ],
     brand: "Zara",
     status: "Available",
@@ -214,9 +214,9 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 65,
     originalPrice: 130,
     images: [
-      "https://images.unsplash.com/photo-1583391733956-6c78276477e1?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1585932248866-f8e13e72c77a?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1583391733956-6c78276477e1?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1585932248866-f8e13e72c77a?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=600&fit=crop&auto=format"
     ],
     brand: "Biba",
     status: "Available",
@@ -248,9 +248,9 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 18,
     originalPrice: 35,
     images: [
-      "https://images.unsplash.com/photo-1564557287817-3785e38ec1f5?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1564557287817-3785e38ec1f5?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Forever 21",
     status: "Available",
@@ -282,9 +282,9 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 25,
     originalPrice: 50,
     images: [
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop&auto=format"
     ],
     brand: "W",
     status: "Available",
@@ -316,9 +316,9 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 48,
     originalPrice: 95,
     images: [
-      "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop"
+      "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=600&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop&auto=format"
     ],
     brand: "H&M",
     status: "Available",
@@ -352,8 +352,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 15,
     originalPrice: 30,
     images: [
-      "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1607665439440-ea5b6a2c7b3a?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1607665439440-ea5b6a2c7b3a?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Carter's",
     status: "Available",
@@ -385,8 +385,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 12,
     originalPrice: 25,
     images: [
-      "https://images.unsplash.com/photo-1503919005314-30d93d07d823?w=400&h=500&fit=crop",
-      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=500&fit=crop"
+      "https://images.unsplash.com/photo-1503919005314-30d93d07d823?w=400&h=500&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&h=500&fit=crop&auto=format"
     ],
     brand: "Monte Carlo",
     status: "Available",
@@ -420,8 +420,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 55,
     originalPrice: 120,
     images: [
-      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=400&fit=crop"
+      "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=400&fit=crop&auto=format"
     ],
     brand: "Clarks",
     status: "Available",
@@ -455,8 +455,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 75,
     originalPrice: 150,
     images: [
-      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop&auto=format"
     ],
     brand: "Coach",
     status: "Available",
@@ -488,8 +488,8 @@ export const sampleClothingItems: ClothingItem[] = [
     price: 28,
     originalPrice: 55,
     images: [
-      "https://images.unsplash.com/photo-1601762603339-fd61e28b698a?w=400&h=400&fit=crop",
-      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop"
+      "https://images.unsplash.com/photo-1601762603339-fd61e28b698a?w=400&h=400&fit=crop&auto=format",
+      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop&auto=format"
     ],
     brand: "Hermès",
     status: "Available",
