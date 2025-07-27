@@ -301,7 +301,7 @@ const ProductGrid = () => {
                   Try adjusting your filters or search terms
                 </p>
                 <Button onClick={clearFilters}>Clear all filters</Button>
-              </div> : <div className={`${getGridClassName()} animate-fade-in-up`} style={{minHeight: '400px'}}>
+              </div> : <div className={`${getGridClassName()}`} style={{minHeight: '400px'}}>
                 {filteredAndSortedProducts.map((item, index) => (
                   <EnhancedProductCard 
                     key={item.id}
@@ -310,10 +310,7 @@ const ProductGrid = () => {
                     onQuickView={handleQuickView} 
                     onShowInterest={handleShowInterest} 
                     isWishlisted={wishlist.includes(item.id)}
-                    className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : ''} animate-scale-in transition-all duration-300`}
-                    style={{
-                      animationDelay: `${index * 0.05}s`
-                    }}
+                    className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : ''} transition-all duration-300`}
                   />
                 ))}
               </div>}
