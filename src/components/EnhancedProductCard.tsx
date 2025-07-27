@@ -150,56 +150,6 @@ const EnhancedProductCard = ({
         </Button>
       </div>
 
-      {/* Content Section */}
-      <div className="card-content p-4 space-y-3 bg-background text-foreground">
-        {/* Tags */}
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 items-start">
-            {tags.slice(0, 2).map((tag, index) => (
-              <Badge key={index} variant="outline" className="text-xs px-2 py-1 bg-muted text-muted-foreground border-border">
-                #{tag}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        {/* Brand and Title */}
-        <div className="space-y-1">
-          <p className="text-sm text-muted-foreground font-medium leading-tight">{brand}</p>
-          <h3 className="font-semibold text-foreground line-clamp-2 leading-tight">
-            {title}
-          </h3>
-        </div>
-
-        {/* Sizes */}
-        <div className="flex flex-wrap gap-1 items-center">
-          {sizes.slice(0, 4).map((size, index) => (
-            <Badge key={index} variant="secondary" className="text-xs px-2 py-1 bg-secondary text-secondary-foreground">
-              {size}
-            </Badge>
-          ))}
-          {sizes.length > 4 && (
-            <Badge variant="secondary" className="text-xs px-2 py-1 bg-secondary text-secondary-foreground">
-              +{sizes.length - 4}
-            </Badge>
-          )}
-        </div>
-
-        {/* Price */}
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold text-primary">₹{price}</span>
-          {originalPrice && originalPrice > price && (
-            <span className="text-sm text-muted-foreground line-through">₹{originalPrice}</span>
-          )}
-        </div>
-
-        {/* Condition */}
-        <div className="flex items-center">
-          <Badge className={`w-fit ${getConditionColor(condition)}`} variant="outline">
-            {condition}
-          </Badge>
-        </div>
-      </div>
 
       {/* Action Button */}
       <div className="card-actions p-4 pt-0">
