@@ -322,43 +322,6 @@ const ScanClothes = () => {
               </CardContent>
             </Card>
 
-            {/* Quick List Options */}
-            <Card>
-              <CardHeader>
-                <CardTitle>List Your Item</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center gap-2"
-                    onClick={() => handleListOnPlatform('eBay')}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    List on eBay
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center gap-2"
-                    onClick={() => handleListOnPlatform('Poshmark')}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    List on Poshmark
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center gap-2"
-                    onClick={() => handleListOnPlatform('Mercari')}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    List on Mercari
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-4 text-center">
-                  One-click listing integration coming soon!
-                </p>
-              </CardContent>
-            </Card>
           </div>
         )}
 
