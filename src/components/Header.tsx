@@ -1,4 +1,4 @@
-import { Search, User, ShoppingBag, Menu } from "lucide-react";
+import { Search, User, ShoppingBag, Menu, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -101,7 +101,12 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="flex items-center space-x-2">
-          
+          <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
+            <Link to="/scan">
+              <Camera className="h-4 w-4 mr-1" />
+              AI Scanner
+            </Link>
+          </Button>
           <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
             <Link to="/sell">
               Sell
