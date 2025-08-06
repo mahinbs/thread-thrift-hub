@@ -60,65 +60,71 @@ const Header = () => {
       handleSearch(e as any);
     }
   };
-  return <header className="sticky top-0 z-50 w-full border-b bg-background/95">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-          <ShoppingBag className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold text-foreground">ReThread</span>
+  return <header className="sticky top-0 z-50 w-full glass-morphism border-b border-primary/20 shadow-neural">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        {/* Enhanced Logo */}
+        <Link to="/" className="flex items-center space-x-3 hover-lift group">
+          <div className="relative">
+            <ShoppingBag className="h-8 w-8 text-primary animate-neon-pulse" />
+            <div className="absolute inset-0 h-8 w-8 bg-primary/20 rounded-full blur-md group-hover:bg-primary/40 transition-all"></div>
+          </div>
+          <span className="text-2xl font-black gradient-text tracking-tight">ReThread</span>
+          <span className="text-xs bg-gradient-neon text-white px-2 py-1 rounded-full font-bold">AI</span>
         </Link>
 
-        {/* Search Bar - Hidden on mobile */}
-        <div className="hidden md:flex flex-1 max-w-md mx-8">
+        {/* Enhanced Search Bar */}
+        <div className="hidden md:flex flex-1 max-w-lg mx-8">
           <form onSubmit={handleSearch} className="relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              type="search" 
-              placeholder="Search for clothes, brands, sizes..." 
-              className="pl-10 bg-muted/50 border-border/50 focus:bg-background transition-colors" 
-              value={searchQuery}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSearchQuery(value);
-                
-                // Only navigate home if completely cleared
-                if (value === '') {
-                  navigate('/');
-                }
-              }}
-              onKeyPress={handleKeyPress}
-            />
-            <Button 
-              type="submit" 
-              size="sm" 
-              className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
-              variant="ghost"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
+            <div className="relative glass-morphism rounded-2xl overflow-hidden">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary" />
+              <Input 
+                type="search" 
+                placeholder="Search with AI magic ✨ Try 'vintage denim' or 'summer vibes'" 
+                className="pl-12 pr-20 h-12 bg-transparent border-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground font-medium" 
+                value={searchQuery}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchQuery(value);
+                  
+                  // Only navigate home if completely cleared
+                  if (value === '') {
+                    navigate('/');
+                  }
+                }}
+                onKeyPress={handleKeyPress}
+              />
+              <Button 
+                type="submit" 
+                size="sm" 
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 px-4 bg-gradient-primary text-primary-foreground hover:scale-105"
+                variant="default"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
           </form>
         </div>
 
         {/* Navigation */}
         <nav className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
+          <Button variant="glass" size="sm" className="hidden md:flex hover-tilt font-semibold" asChild>
             <Link to="/scan">
-              <Camera className="h-4 w-4 mr-1" />
-              AI Scanner
+              <Camera className="h-4 w-4 mr-2" />
+              📱 Scan
             </Link>
           </Button>
-          <Button variant="ghost" size="sm" className="hidden md:flex" asChild>
+          <Button variant="glass" size="sm" className="hidden md:flex hover-tilt font-semibold" asChild>
             <Link to="/sell">
-              Sell
+              💰 Sell
             </Link>
           </Button>
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline" size="sm" className="hover-tilt" asChild>
             <Link to="/login">
               <User className="h-4 w-4" />
-              <span className="hidden sm:inline ml-2">Login</span>
+              <span className="hidden sm:inline ml-2 font-semibold">Login</span>
             </Link>
           </Button>
-          <Button variant="eco" size="sm" asChild>
+          <Button variant="neon" size="sm" className="hover-tilt font-bold" asChild>
             <Link to="/admin/login">
               <ShoppingBag className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Admin</span>

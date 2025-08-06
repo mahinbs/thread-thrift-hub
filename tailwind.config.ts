@@ -65,13 +65,16 @@ export default {
 				}
 			},
 			backgroundImage: {
-				'gradient-eco': 'var(--gradient-eco)',
-				'gradient-earth': 'var(--gradient-earth)',
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-secondary': 'var(--gradient-secondary)',
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-glass': 'var(--gradient-glass)',
 				'gradient-glass-dark': 'var(--gradient-glass-dark)',
 				'gradient-shimmer': 'var(--gradient-shimmer)',
-				'gradient-neural': 'var(--gradient-neural)'
+				'gradient-neural': 'var(--gradient-neural)',
+				'gradient-card': 'var(--gradient-card)',
+				'gradient-neon': 'var(--gradient-neon)',
+				'gradient-sunset': 'var(--gradient-sunset)'
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',
@@ -79,7 +82,8 @@ export default {
 				'hover': 'var(--shadow-hover)',
 				'glass': 'var(--shadow-glass)',
 				'glow': 'var(--shadow-glow)',
-				'neural': 'var(--shadow-neural)'
+				'neural': 'var(--shadow-neural)',
+				'neon': 'var(--shadow-neon)'
 			},
 			backdropBlur: {
 				'glass': '20px'
@@ -133,6 +137,15 @@ export default {
 				'pulse-glow': {
 					'0%, 100%': { boxShadow: '0 0 20px hsl(var(--primary) / 0.3)' },
 					'50%': { boxShadow: '0 0 40px hsl(var(--primary) / 0.6)' }
+				},
+				'morph': {
+					'0%': { borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' },
+					'50%': { borderRadius: '30% 60% 70% 40% / 50% 60% 30% 60%' },
+					'100%': { borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }
+				},
+				'neon-pulse': {
+					'0%, 100%': { boxShadow: '0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--secondary) / 0.3)' },
+					'50%': { boxShadow: '0 0 40px hsl(var(--primary) / 0.8), 0 0 80px hsl(var(--secondary) / 0.6)' }
 				}
 			},
 			animation: {
@@ -144,7 +157,9 @@ export default {
 				'slide-in-left': 'slide-in-left 0.5s ease-out',
 				'scale-in': 'scale-in 0.3s ease-out',
 				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 3s ease-in-out infinite'
+				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+				'morph': 'morph 8s ease-in-out infinite',
+				'neon-pulse': 'neon-pulse 2s ease-in-out infinite'
 			}
 		}
 	},
