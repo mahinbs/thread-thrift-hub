@@ -142,7 +142,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </Button>
 
         {/* Page content */}
-        <main className="px-6 py-6">
+        <main className="px-4 pt-4 pb-6">
           {children}
         </main>
       </div>
