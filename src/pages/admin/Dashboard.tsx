@@ -161,7 +161,7 @@ const Dashboard = () => {
 
         {/* Inventory Management */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Inventory Management</CardTitle>
@@ -175,9 +175,9 @@ const Dashboard = () => {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             {/* Search and Filter */}
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -199,19 +199,19 @@ const Dashboard = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Item</th>
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Category</th>
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Size</th>
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Condition</th>
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Price</th>
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-                      <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Actions</th>
+                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Item</th>
+                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Category</th>
+                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Size</th>
+                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Condition</th>
+                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Price</th>
+                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
+                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredItems.map((item) => (
                       <tr key={item.id} className="border-b">
-                        <td className="p-4">
+                        <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <img
                               src={item.image}
@@ -224,12 +224,12 @@ const Dashboard = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="p-4">{item.category}</td>
-                        <td className="p-4">{item.size}</td>
-                        <td className="p-4">{item.condition}</td>
-                        <td className="p-4 font-medium">${item.price}</td>
-                        <td className="p-4">{getStatusBadge(item.status)}</td>
-                        <td className="p-4">
+                        <td className="px-4 py-3">{item.category}</td>
+                        <td className="px-4 py-3">{item.size}</td>
+                        <td className="px-4 py-3">{item.condition}</td>
+                        <td className="px-4 py-3 font-medium">${item.price}</td>
+                        <td className="px-4 py-3">{getStatusBadge(item.status)}</td>
+                        <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <Button variant="ghost" size="sm">
                               <Eye className="h-4 w-4" />
