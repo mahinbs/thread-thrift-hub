@@ -109,29 +109,37 @@ const Hero = () => {
             </Button>
           </div>
 
-          {/* Enhanced Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12 animate-fade-in-up" style={{
+          {/* Compact Stats Chips */}
+          <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-12 animate-fade-in-up" style={{
           animationDelay: '0.5s'
         }}>
-            <Card className="text-center p-8 gen-z-card hover-float">
-              <div className="text-5xl md:text-6xl font-black gradient-text mb-3 animate-bounce-gentle">2M+</div>
-              <div className="text-white font-bold text-lg">Items Scanned 📸</div>
-              <div className="text-white/70 text-sm mt-2">AI accuracy: 99.2%</div>
-            </Card>
-            <Card className="text-center p-8 gen-z-card hover-float">
-              <div className="text-5xl md:text-6xl font-black gradient-text mb-3 animate-bounce-gentle" style={{
-              animationDelay: '0.2s'
-            }}>$50M+</div>
-              <div className="text-white font-bold text-lg">Earned by Users 💰</div>
-              <div className="text-white/70 text-sm mt-2">Average: $127/item</div>
-            </Card>
-            <Card className="text-center p-8 gen-z-card hover-float">
-              <div className="text-5xl md:text-6xl font-black gradient-text mb-3 animate-bounce-gentle" style={{
-              animationDelay: '0.4s'
-            }}>98%</div>
-              <div className="text-white font-bold text-lg">Love This App 💜</div>
-              <div className="text-white/70 text-sm mt-2">5-star ratings</div>
-            </Card>
+            <div className="glass-morphism px-6 py-4 rounded-2xl hover-lift">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-black gradient-text">2M+</span>
+                <div>
+                  <div className="text-white font-semibold text-sm">Items Scanned</div>
+                  <div className="text-white/60 text-xs">99.2% AI accuracy</div>
+                </div>
+              </div>
+            </div>
+            <div className="glass-morphism px-6 py-4 rounded-2xl hover-lift">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-black gradient-text">$50M+</span>
+                <div>
+                  <div className="text-white font-semibold text-sm">User Earnings</div>
+                  <div className="text-white/60 text-xs">Avg $127/item</div>
+                </div>
+              </div>
+            </div>
+            <div className="glass-morphism px-6 py-4 rounded-2xl hover-lift">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-black gradient-text">98%</span>
+                <div>
+                  <div className="text-white font-semibold text-sm">Love Rating</div>
+                  <div className="text-white/60 text-xs">5-star reviews</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Enhanced Feature Icons */}

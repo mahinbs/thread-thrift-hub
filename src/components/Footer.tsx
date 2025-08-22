@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <ShoppingBag className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold text-foreground">ReThread</span>
+              <span className="text-xl font-bold text-foreground">Drape</span>
             </div>
             <p className="text-muted-foreground">
               Making sustainable fashion accessible to everyone. Join our community of conscious shoppers.
@@ -71,7 +71,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border/50 mt-8 pt-8 text-center text-muted-foreground">
-          <p>&copy; 2024 ReThread. All rights reserved. Made with ♻️ for a sustainable future.</p>
+          <p>&copy; 2024 Drape. All rights reserved. Made with ♻️ for a sustainable future.</p>
         </div>
       </div>
     </footer>

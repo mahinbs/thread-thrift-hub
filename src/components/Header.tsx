@@ -68,7 +68,7 @@ const Header = () => {
             <ShoppingBag className="h-8 w-8 text-primary animate-neon-pulse" />
             <div className="absolute inset-0 h-8 w-8 bg-primary/20 rounded-full blur-md group-hover:bg-primary/40 transition-all"></div>
           </div>
-          <span className="text-2xl font-black gradient-text tracking-tight">ReThread</span>
+          <span className="text-2xl font-black gradient-text tracking-tight">Drape</span>
           <span className="text-xs bg-gradient-neon text-white px-2 py-1 rounded-full font-bold">AI</span>
         </Link>
 
