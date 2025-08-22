@@ -328,7 +328,7 @@ All colors MUST be HSL.
 
   /* Card Grid Layout */
   .card-grid {
-    @apply grid gap-6 w-full;
+    @apply grid gap-8 w-full;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     align-items: stretch;
   }
@@ -336,19 +336,21 @@ All colors MUST be HSL.
   @media (max-width: 640px) {
     .card-grid {
       grid-template-columns: 1fr;
-      gap: 1rem;
+      gap: 1.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .card-grid {
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
     }
   }
 
   @media (min-width: 1536px) {
     .card-grid {
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2.5rem;
     }
   }
 

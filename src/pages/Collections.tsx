@@ -194,9 +194,9 @@ const Collections = () => {
 
   const getGridClassName = () => {
     if (viewMode === "list") {
-      return "max-w-4xl mx-auto space-y-6";
+      return "max-w-4xl mx-auto space-y-8";
     }
-    return "max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 place-items-center";
+    return "max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8 items-stretch";
   };
 
   // Handle search-only requests (no specific category)
@@ -275,14 +275,14 @@ const Collections = () => {
             {filteredProducts.length > 0 ? (
               <div className={getGridClassName()}>
                 {filteredProducts.map((item) => (
-                  <div key={item.id} className={viewMode === "grid" ? "w-full max-w-sm mx-auto" : "w-full"}>
-                    <EnhancedProductCard
-                      {...item}
-                      onWishlist={() => handleWishlist(item.id)}
-                      onShowInterest={() => handleShowInterest(item.id)}
-                      isWishlisted={wishlist.has(item.id)}
-                    />
-                  </div>
+                  <EnhancedProductCard
+                    key={item.id}
+                    {...item}
+                    onWishlist={() => handleWishlist(item.id)}
+                    onShowInterest={() => handleShowInterest(item.id)}
+                    isWishlisted={wishlist.has(item.id)}
+                    className="w-full h-full"
+                  />
                 ))}
               </div>
             ) : (

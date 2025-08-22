@@ -37,7 +37,7 @@ const ProductGrid = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<FilterOptions>(initialFilters);
   const [sortBy, setSortBy] = useState<SortOption>('newest');
-  const [viewMode, setViewMode] = useState<ViewMode>('masonry');
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [showTrending, setShowTrending] = useState(false);
   const [recentlyViewed, setRecentlyViewed] = useState<string[]>([]);
@@ -178,9 +178,9 @@ const ProductGrid = () => {
   const getGridClassName = () => {
     switch (viewMode) {
       case 'masonry':
-        return 'columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 space-y-0 w-full';
+        return 'columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-8 space-y-0 w-full [column-gap:2rem]';
       case 'list':
-        return 'flex flex-col gap-6 max-w-4xl mx-auto w-full';
+        return 'flex flex-col gap-8 max-w-4xl mx-auto w-full';
       case 'grid':
       default:
         return 'card-grid';
@@ -310,7 +310,7 @@ const ProductGrid = () => {
                     onQuickView={handleQuickView} 
                     onShowInterest={handleShowInterest} 
                     isWishlisted={wishlist.includes(item.id)}
-                    className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-6' : ''} transition-all duration-300`}
+                    className={`${viewMode === 'masonry' ? 'break-inside-avoid mb-8' : ''} transition-all duration-300`}
                   />
                 ))}
               </div>}

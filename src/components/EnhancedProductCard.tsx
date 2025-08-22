@@ -69,7 +69,7 @@ const EnhancedProductCard = ({
 
   return (
     <Card 
-      className={`card masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden ${className || ''}`}
+      className={`w-full card masonry-item glass-card hover-lift group cursor-pointer relative overflow-hidden ${className || ''}`}
       style={style}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
