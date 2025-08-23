@@ -1,15 +1,29 @@
-import { Search, User, ShoppingBag, Menu, Camera } from "lucide-react";
+import { Search, User, ShoppingBag, Menu, Camera, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   // Sync search input with URL params
   useEffect(() => {
@@ -113,19 +127,42 @@ const Header = () => {
               📱 Scan
             </Link>
           </Button>
-          <Button variant="glass" size="sm" className="hidden md:flex hover-tilt font-semibold" asChild>
+          <Button variant="outline" size="sm" className="hover-tilt" asChild>
             <Link to="/sell">
               💰 Sell
             </Link>
           </Button>
-          <Button variant="outline" size="sm" className="hover-tilt" asChild>
-            <Link to="/login">
-              <User className="h-4 w-4" />
-              <span className="hidden sm:inline ml-2 font-semibold">Login</span>
-            </Link>
-          </Button>
+          
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="hover-tilt">
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-2 font-semibold">Account</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link to="/admin/dashboard">Admin Panel</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button variant="outline" size="sm" className="hover-tilt" asChild>
+              <Link to="/auth">
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline ml-2 font-semibold">Login</span>
+              </Link>
+            </Button>
+          )}
+          
           <Button variant="neon" size="sm" className="hover-tilt font-bold" asChild>
-            <Link to="/admin/login">
+            <Link to="/admin/dashboard">
               <ShoppingBag className="h-4 w-4" />
               <span className="hidden sm:inline ml-2">Admin</span>
             </Link>

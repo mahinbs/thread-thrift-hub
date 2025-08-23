@@ -1,257 +1,127 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import AdminLayout from "@/components/admin/AdminLayout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { 
-  Package, 
-  DollarSign, 
-  TrendingUp, 
-  Users,
-  Search,
-  Filter,
-  Plus,
-  Edit,
-  Trash2,
-  Eye
-} from "lucide-react"
-
-// Mock data for demonstration
-const mockItems = [
-  {
-    id: 1,
-    name: "Vintage Denim Jacket",
-    category: "Jackets",
-    size: "M",
-    material: "Denim",
-    condition: "Excellent",
-    price: 45,
-    status: "Available",
-    image: "/placeholder.svg",
-    dateAdded: "2024-01-15"
-  },
-  {
-    id: 2,
-    name: "Organic Cotton T-Shirt",
-    category: "Tops",
-    size: "L",
-    material: "Organic Cotton",
-    condition: "Good",
-    price: 18,
-    status: "Sold",
-    image: "/placeholder.svg",
-    dateAdded: "2024-01-14"
-  },
-  {
-    id: 3,
-    name: "Wool Sweater",
-    category: "Sweaters",
-    size: "S",
-    material: "Wool",
-    condition: "Very Good",
-    price: 32,
-    status: "Available",
-    image: "/placeholder.svg",
-    dateAdded: "2024-01-13"
-  }
-]
+import { Package, Users, DollarSign, TrendingUp } from "lucide-react"
 
 const Dashboard = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [items, setItems] = useState(mockItems)
-  const [showFilter, setShowFilter] = useState(false)
-  const navigate = useNavigate()
-
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const stats = {
-    totalItems: items.length,
-    availableItems: items.filter(item => item.status === "Available").length,
-    soldItems: items.filter(item => item.status === "Sold").length,
-    totalRevenue: items.filter(item => item.status === "Sold").reduce((sum, item) => sum + item.price, 0)
-  }
-
-  const handleAddItem = () => {
-    navigate("/admin/add-item")
-  }
-
-  const handleViewItem = (itemId: number) => {
-    alert(`Viewing item ${itemId}`)
-  }
-
-  const handleEditItem = (itemId: number) => {
-    navigate("/admin/inventory")
-  }
-
-  const handleDeleteItem = (itemId: number) => {
-    if (confirm("Are you sure you want to delete this item?")) {
-      setItems(items.filter(item => item.id !== itemId))
+  const stats = [
+    {
+      title: "Total Items",
+      value: "1,234",
+      description: "↗︎ 20.1% from last month",
+      icon: Package,
+      trend: "up"
+    },
+    {
+      title: "Total Users", 
+      value: "573",
+      description: "↗︎ 180.1% from last month",
+      icon: Users,
+      trend: "up"
+    },
+    {
+      title: "Revenue",
+      value: "$12,234", 
+      description: "↗︎ 19% from last month",
+      icon: DollarSign,
+      trend: "up"
+    },
+    {
+      title: "Growth Rate",
+      value: "24%",
+      description: "↗︎ 4% from last month", 
+      icon: TrendingUp,
+      trend: "up"
     }
-  }
-
-  const getStatusBadge = (status: string) => {
-    if (status === "Available") {
-      return <Badge className="bg-primary text-primary-foreground">Available</Badge>
-    }
-    return <Badge variant="secondary">Sold</Badge>
-  }
+  ]
 
   return (
-    <AdminLayout>
-      <div className="space-y-4">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Items</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalItems}</div>
-              <p className="text-xs text-muted-foreground">
-                +2 from last week
-              </p>
-            </CardContent>
-          </Card>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-2">
+          Welcome to the Drape admin dashboard. Here's what's happening with your store.
+        </p>
+      </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Available</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.availableItems}</div>
-              <p className="text-xs text-muted-foreground">
-                Ready for sale
-              </p>
-            </CardContent>
-          </Card>
+      {/* Stats Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <Card key={index}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {stat.title}
+                </CardTitle>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <p className="text-xs text-muted-foreground">
+                  {stat.description}
+                </p>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sold Items</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.soldItems}</div>
-              <p className="text-xs text-muted-foreground">
-                This month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">${stats.totalRevenue}</div>
-              <p className="text-xs text-muted-foreground">
-                From sold items
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Inventory Management */}
-        <Card>
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Inventory Management</CardTitle>
-                <CardDescription>
-                  Manage your used clothing items
-                </CardDescription>
-              </div>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Item
-              </Button>
-            </div>
+      {/* Recent Activity */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Recent Orders</CardTitle>
+            <CardDescription>
+              You have 3 new orders this week.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="pt-4">
-            {/* Search and Filter */}
-            <div className="flex items-center gap-4 mb-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search items..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Button variant="outline" className="gap-2">
-                <Filter className="h-4 w-4" />
-                Filter
-              </Button>
+          <CardContent>
+            <div className="space-y-4">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="flex items-center">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      Order #{1000 + item}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Vintage Denim Jacket - Size M
+                    </p>
+                  </div>
+                  <div className="ml-auto">
+                    <Badge variant="outline">Pending</Badge>
+                  </div>
+                </div>
+              ))}
             </div>
+          </CardContent>
+        </Card>
 
-            {/* Items Table */}
-            <div className="rounded-md border">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Item</th>
-                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Category</th>
-                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Size</th>
-                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Condition</th>
-                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Price</th>
-                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
-                      <th className="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredItems.map((item) => (
-                      <tr key={item.id} className="border-b">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="h-10 w-10 rounded-md object-cover bg-muted"
-                            />
-                            <div>
-                              <div className="font-medium">{item.name}</div>
-                              <div className="text-sm text-muted-foreground">{item.material}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">{item.category}</td>
-                        <td className="px-4 py-3">{item.size}</td>
-                        <td className="px-4 py-3">{item.condition}</td>
-                        <td className="px-4 py-3 font-medium">${item.price}</td>
-                        <td className="px-4 py-3">{getStatusBadge(item.status)}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="sm">
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>
+              Common tasks and shortcuts.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="grid gap-2">
+              <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer">
+                <p className="font-medium">Add New Item</p>
+                <p className="text-sm text-muted-foreground">Add clothing to inventory</p>
+              </div>
+              <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer">
+                <p className="font-medium">View Analytics</p>
+                <p className="text-sm text-muted-foreground">Check store performance</p>
+              </div>
+              <div className="p-3 border rounded-lg hover:bg-accent cursor-pointer">
+                <p className="font-medium">Manage Users</p>
+                <p className="text-sm text-muted-foreground">User management tools</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-    </AdminLayout>
+    </div>
   )
 }
 
