@@ -18,7 +18,29 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, signOut } = useAuth();
+  const { user, signOut, hasRole } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdminRole = async () => {
+      if (user && hasRole) {
+        try {
+          const adminRole = await hasRole('admin');
+          setIsAdmin(adminRole);
+        } catch (error) {
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+    };
+    
+    checkAdminRole();
+  }, [user, hasRole]);
+
+  // Compute display name for logged-in user
+  const displayName = user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'Account';
 
   const handleSignOut = async () => {
     await signOut();
@@ -138,14 +160,18 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="hover-tilt">
                   <User className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2 font-semibold">Account</span>
+                  <span className="hidden sm:inline ml-2 font-semibold">{displayName}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link to="/admin/dashboard">Admin Panel</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                {isAdmin && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/dashboard">Admin Panel</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
@@ -161,12 +187,14 @@ const Header = () => {
             </Button>
           )}
           
-          <Button variant="neon" size="sm" className="hover-tilt font-bold" asChild>
-            <Link to="/admin/dashboard">
-              <ShoppingBag className="h-4 w-4" />
-              <span className="hidden sm:inline ml-2">Admin</span>
-            </Link>
-          </Button>
+          {!user && (
+            <Button variant="neon" size="sm" className="hover-tilt font-bold" asChild>
+              <Link to="/auth">
+                <ShoppingBag className="h-4 w-4" />
+                <span className="hidden sm:inline ml-2">Admin Login</span>
+              </Link>
+            </Button>
+          )}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-4 w-4" />
           </Button>
