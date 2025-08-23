@@ -12,6 +12,11 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/admin/Dashboard";
 import AddItem from "./pages/admin/AddItem";
 import Inventory from "./pages/admin/Inventory";
+import Orders from "./pages/admin/Orders";
+import Categories from "./pages/admin/Categories";
+import Analytics from "./pages/admin/Analytics";
+import UserManagement from "./pages/admin/UserManagement";
+import MediaLibrary from "./pages/admin/MediaLibrary";
 import Settings from "./pages/admin/Settings";
 import AdminProtectedRoute from "./components/admin/AdminProtectedRoute";
 import Collections from "./pages/Collections";
@@ -56,6 +61,41 @@ const App = () => (
               <AdminProtectedRoute>
                 <AdminLayout>
                   <Inventory />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            } />
+            <Route path="/admin/orders" element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <Orders />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            } />
+            <Route path="/admin/categories" element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <Categories />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            } />
+            <Route path="/admin/analytics" element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <Analytics />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            } />
+            <Route path="/admin/users" element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <UserManagement />
+                </AdminLayout>
+              </AdminProtectedRoute>
+            } />
+            <Route path="/admin/media" element={
+              <AdminProtectedRoute>
+                <AdminLayout>
+                  <MediaLibrary />
                 </AdminLayout>
               </AdminProtectedRoute>
             } />

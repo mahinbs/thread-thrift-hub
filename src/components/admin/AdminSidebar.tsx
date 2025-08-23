@@ -6,7 +6,11 @@ import {
   Users, 
   Settings, 
   LogOut,
-  Leaf
+  Leaf,
+  ShoppingCart,
+  Tag,
+  BarChart3,
+  Image
 } from "lucide-react"
 import {
   Sidebar,
@@ -27,6 +31,11 @@ const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Inventory", href: "/admin/inventory", icon: Package },
   { name: "Add Item", href: "/admin/add-item", icon: Package },
+  { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { name: "Categories", href: "/admin/categories", icon: Tag },
+  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { name: "Users", href: "/admin/users", icon: Users },
+  { name: "Media", href: "/admin/media", icon: Image },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
