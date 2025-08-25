@@ -231,15 +231,90 @@ const ScanClothes = () => {
     }
   }, [selectedImage, toast]);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-        setScanResult(null);
+    if (!file) return;
+
+    console.log('File selected:', file.name, file.type, file.size);
+
+    try {
+      let processedFile: File | Blob = file;
+
+      // Convert HEIC/HEIF to JPEG
+      if (file.type === 'image/heic' || file.type === 'image/heif' || 
+          file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
+        
+        console.log('Converting HEIC/HEIF to JPEG...');
+        toast({
+          title: "Converting Image",
+          description: "Converting HEIC format to JPEG...",
+        });
+
+        const heic2any = (await import('heic2any')).default;
+        processedFile = await heic2any({
+          blob: file,
+          toType: "image/jpeg",
+          quality: 0.8
+        }) as Blob;
+        
+        console.log('HEIC conversion successful');
+      }
+
+      // Normalize image size and quality
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        // Calculate dimensions (max 1920px on longest side)
+        const maxSize = 1920;
+        let { width, height } = img;
+        
+        if (width > maxSize || height > maxSize) {
+          if (width > height) {
+            height = Math.round((height * maxSize) / width);
+            width = maxSize;
+          } else {
+            width = Math.round((width * maxSize) / height);
+            height = maxSize;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+          setSelectedImage(dataURL);
+          setScanResult(null);
+          console.log('Image processed successfully:', width, 'x', height);
+        }
       };
-      reader.readAsDataURL(file);
+
+      img.onerror = () => {
+        console.error('Failed to load image for processing');
+        toast({
+          title: "Upload Failed",
+          description: "Failed to process the selected image. Please try a different image.",
+          variant: "destructive"
+        });
+      };
+
+      img.src = URL.createObjectURL(processedFile);
+
+    } catch (error) {
+      console.error('Error processing uploaded file:', error);
+      toast({
+        title: "Upload Failed", 
+        description: error instanceof Error ? error.message : "Failed to process the uploaded image.",
+        variant: "destructive"
+      });
+    } finally {
+      // Reset file input so same file can be selected again
+      if (event.target) {
+        event.target.value = '';
+      }
     }
   };
 

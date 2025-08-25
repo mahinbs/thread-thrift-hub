@@ -151,20 +151,26 @@ Respond ONLY with valid JSON in this exact format:
 }
 
 const validateImage = (imageBase64: string): { isValid: boolean; error?: string } => {
-  // Check if it's a valid base64 image
-  if (!imageBase64.startsWith('data:image/')) {
-    return { isValid: false, error: 'Invalid image format. Please upload a valid image file.' }
+  if (!imageBase64) {
+    return { isValid: false, error: 'No image provided' };
   }
 
-  // Check image size (base64 string length roughly correlates to file size)
-  const sizeInBytes = (imageBase64.length * 3) / 4
-  const maxSizeInMB = 10
-  if (sizeInBytes > maxSizeInMB * 1024 * 1024) {
-    return { isValid: false, error: `Image too large. Please upload an image smaller than ${maxSizeInMB}MB.` }
+  // Check if it's a valid base64 data URL - be more tolerant with MIME types and case
+  const imageDataUrlPattern = /^data:image\/(jpeg|jpg|png|gif|webp|bmp|svg\+xml);base64,/i;
+  if (!imageDataUrlPattern.test(imageBase64)) {
+    return { isValid: false, error: 'Invalid image format. Please use JPEG, PNG, GIF, WebP, BMP, or SVG format.' };
   }
 
-  return { isValid: true }
-}
+  // Check file size (base64 is roughly 1.37x the original size)
+  const sizeInBytes = (imageBase64.length * 3) / 4;
+  const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+
+  if (sizeInBytes > maxSizeInBytes) {
+    return { isValid: false, error: 'Image too large. Please use an image smaller than 10MB.' };
+  }
+
+  return { isValid: true };
+};
 
 serve(async (req) => {
   // Handle CORS preflight requests
