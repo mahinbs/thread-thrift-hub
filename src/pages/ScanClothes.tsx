@@ -50,6 +50,7 @@ const ScanClothes = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [scanningStep, setScanningStep] = useState<string>('');
   const [needsPlayTrigger, setNeedsPlayTrigger] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
@@ -60,6 +61,15 @@ const ScanClothes = () => {
       default: return 'bg-muted';
     }
   };
+
+  const checkVideoReady = useCallback(() => {
+    if (videoRef.current && videoRef.current.videoWidth > 0 && videoRef.current.videoHeight > 0) {
+      setIsVideoReady(true);
+      console.log('Video is ready for capture - dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+      return true;
+    }
+    return false;
+  }, []);
 
   const performAIScan = useCallback(async () => {
     if (!selectedImage) return;
@@ -232,6 +242,7 @@ const ScanClothes = () => {
       setStream(mediaStream);
       setIsCameraActive(true);
       setNeedsPlayTrigger(false);
+      setIsVideoReady(false);
 
       // Wait for video ref to be available
       if (videoRef.current) {
@@ -248,10 +259,12 @@ const ScanClothes = () => {
         video.onloadedmetadata = () => {
           console.log('Video metadata loaded, dimensions:', 
             video.videoWidth, 'x', video.videoHeight);
+          checkVideoReady();
         };
         
         video.oncanplay = async () => {
           console.log('Video can play');
+          checkVideoReady();
           try {
             await video.play();
             console.log('Video playback started successfully');
@@ -260,6 +273,12 @@ const ScanClothes = () => {
             console.error('Video play error:', playError);
             setNeedsPlayTrigger(true);
           }
+        };
+        
+        // Additional event to ensure we catch when video dimensions are available
+        video.onloadeddata = () => {
+          console.log('Video data loaded');
+          checkVideoReady();
         };
         
         // Ensure video plays with proper attributes
@@ -310,18 +329,59 @@ const ScanClothes = () => {
   };
 
   const capturePhoto = () => {
-    if (videoRef.current) {
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(videoRef.current, 0, 0);
-        const dataURL = canvas.toDataURL('image/jpeg');
-        setSelectedImage(dataURL);
-        stopCamera();
-        setScanResult(null);
+    if (!videoRef.current) {
+      console.error('Video ref not available for capture');
+      toast({
+        title: "Capture Failed",
+        description: "Camera is not ready. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (videoRef.current.videoWidth === 0 || videoRef.current.videoHeight === 0) {
+      console.error('Video dimensions are zero - cannot capture');
+      toast({
+        title: "Capture Failed", 
+        description: "Camera preview is not ready yet. Please wait and try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Capturing photo with dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      ctx.drawImage(videoRef.current, 0, 0);
+      const dataURL = canvas.toDataURL('image/jpeg');
+      
+      // Verify the captured image isn't empty (basic check)
+      if (dataURL === 'data:image/jpeg;base64,') {
+        console.error('Captured empty image');
+        toast({
+          title: "Capture Failed",
+          description: "Failed to capture image. Please try again.",
+          variant: "destructive"
+        });
+        return;
       }
+      
+      setSelectedImage(dataURL);
+      stopCamera();
+      setScanResult(null);
+      console.log('Photo captured successfully');
+    } else {
+      console.error('Failed to get canvas context');
+      toast({
+        title: "Capture Failed",
+        description: "Failed to process camera image. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -347,6 +407,7 @@ const ScanClothes = () => {
     }
     setIsCameraActive(false);
     setNeedsPlayTrigger(false);
+    setIsVideoReady(false);
   };
 
   return (
@@ -423,9 +484,9 @@ const ScanClothes = () => {
                   )}
                 </AspectRatio>
                 <div className="flex justify-center gap-4 mt-4">
-                  <Button onClick={capturePhoto} size="lg" disabled={needsPlayTrigger}>
+                  <Button onClick={capturePhoto} size="lg" disabled={needsPlayTrigger || !isVideoReady}>
                     <Camera className="h-5 w-5 mr-2" />
-                    Capture
+                    {!isVideoReady ? 'Preparing...' : 'Capture'}
                   </Button>
                   <Button variant="outline" onClick={stopCamera}>
                     Cancel
