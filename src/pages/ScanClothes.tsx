@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
-import { Camera, Upload, Sparkles, DollarSign, ArrowLeft, TrendingUp, Info, CheckCircle } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Camera, Upload, Sparkles, DollarSign, ArrowLeft, TrendingUp, Info, CheckCircle, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,6 +51,10 @@ const ScanClothes = () => {
   const [scanningStep, setScanningStep] = useState<string>('');
   const [needsPlayTrigger, setNeedsPlayTrigger] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [permissionState, setPermissionState] = useState<string>('checking');
+  const [isInIframe, setIsInIframe] = useState(false);
+  const [watchdogTimeout, setWatchdogTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
@@ -70,6 +74,65 @@ const ScanClothes = () => {
     }
     return false;
   }, []);
+
+  // Check if running in iframe
+  useEffect(() => {
+    setIsInIframe(window.top !== window.self);
+  }, []);
+
+  // Check camera permissions
+  useEffect(() => {
+    const checkPermissions = async () => {
+      try {
+        if ('permissions' in navigator && 'query' in navigator.permissions) {
+          const result = await navigator.permissions.query({ name: 'camera' as PermissionName });
+          setPermissionState(result.state);
+          result.addEventListener('change', () => setPermissionState(result.state));
+        }
+      } catch (error) {
+        console.log('Permissions API not available');
+        setPermissionState('unknown');
+      }
+    };
+    checkPermissions();
+  }, []);
+
+  // Readiness watchdog
+  const startVideoWatchdog = useCallback(() => {
+    if (watchdogTimeout) {
+      clearTimeout(watchdogTimeout);
+    }
+    
+    let attempts = 0;
+    const maxAttempts = 12; // 3 seconds with 250ms intervals
+    
+    const checkReadiness = () => {
+      if (videoRef.current && videoRef.current.videoWidth > 0 && videoRef.current.videoHeight > 0) {
+        setIsVideoReady(true);
+        console.log('Video ready via watchdog - dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+        
+        // Use requestVideoFrameCallback if available for immediate readiness
+        if ('requestVideoFrameCallback' in videoRef.current) {
+          (videoRef.current as any).requestVideoFrameCallback(() => {
+            setIsVideoReady(true);
+            console.log('Video frame callback - first frame received');
+          });
+        }
+        return;
+      }
+      
+      attempts++;
+      if (attempts < maxAttempts) {
+        setWatchdogTimeout(setTimeout(checkReadiness, 250));
+      } else {
+        console.log('Video watchdog timeout - showing play trigger');
+        setNeedsPlayTrigger(true);
+        setCameraError('Camera preview not loading. Tap to retry.');
+      }
+    };
+    
+    setWatchdogTimeout(setTimeout(checkReadiness, 250));
+  }, [watchdogTimeout]);
 
   const performAIScan = useCallback(async () => {
     if (!selectedImage) return;
@@ -182,6 +245,13 @@ const ScanClothes = () => {
 
   const startCamera = async () => {
     try {
+      // Stop any existing streams first
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      
+      setCameraError(null);
+      
       // Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         // Fallback for older browsers or restricted environments
@@ -255,6 +325,9 @@ const ScanClothes = () => {
         
         video.srcObject = mediaStream;
         
+        // Start the readiness watchdog
+        startVideoWatchdog();
+        
         // Add event listeners for better debugging
         video.onloadedmetadata = () => {
           console.log('Video metadata loaded, dimensions:', 
@@ -269,9 +342,11 @@ const ScanClothes = () => {
             await video.play();
             console.log('Video playback started successfully');
             setNeedsPlayTrigger(false);
+            setCameraError(null);
           } catch (playError) {
             console.error('Video play error:', playError);
             setNeedsPlayTrigger(true);
+            setCameraError('Camera preview requires user interaction to start.');
           }
         };
         
@@ -281,14 +356,24 @@ const ScanClothes = () => {
           checkVideoReady();
         };
         
+        // Use requestVideoFrameCallback if available
+        if ('requestVideoFrameCallback' in video) {
+          (video as any).requestVideoFrameCallback(() => {
+            setIsVideoReady(true);
+            console.log('First video frame received');
+          });
+        }
+        
         // Ensure video plays with proper attributes
         try {
           await video.play();
           console.log('Video playback started successfully');
           setNeedsPlayTrigger(false);
+          setCameraError(null);
         } catch (playError) {
           console.error('Video play error:', playError);
           setNeedsPlayTrigger(true);
+          setCameraError('Camera preview requires user interaction to start.');
         }
       } else {
         console.error('Video ref not available');
@@ -303,6 +388,7 @@ const ScanClothes = () => {
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
         errorMessage = "Camera permission denied. Please allow camera access in your browser settings and try again.";
         showFallback = true;
+        setPermissionState('denied');
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
         errorMessage = "No camera found on this device. Please upload an image instead.";
         showFallback = true;
@@ -312,6 +398,8 @@ const ScanClothes = () => {
         errorMessage = "Camera settings not supported on this device. Please upload an image instead.";
         showFallback = true;
       }
+      
+      setCameraError(`${error.name}: ${error.message}`);
       
       toast({
         title: "Camera Error",
@@ -390,14 +478,25 @@ const ScanClothes = () => {
       try {
         await videoRef.current.play();
         setNeedsPlayTrigger(false);
-        console.log('Video playback started after user interaction');
+        setCameraError(null);
+        startVideoWatchdog(); // Restart watchdog after user interaction
+        console.log('Video playbook started after user interaction');
       } catch (error) {
         console.error('Failed to start video after user trigger:', error);
+        setCameraError('Failed to start camera preview');
       }
     }
   };
 
+  const openInNewTab = () => {
+    window.open('/scan', '_blank');
+  };
+
   const stopCamera = () => {
+    if (watchdogTimeout) {
+      clearTimeout(watchdogTimeout);
+      setWatchdogTimeout(null);
+    }
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
@@ -408,6 +507,7 @@ const ScanClothes = () => {
     setIsCameraActive(false);
     setNeedsPlayTrigger(false);
     setIsVideoReady(false);
+    setCameraError(null);
   };
 
   return (
@@ -433,6 +533,55 @@ const ScanClothes = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Iframe Detection Banner */}
+        {isInIframe && (
+          <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
+            <CardContent className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <Info className="h-5 w-5 text-yellow-600" />
+                <div>
+                  <p className="font-medium text-yellow-800 dark:text-yellow-200">Camera works better in a new tab</p>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-300">Your browser may restrict camera access in embedded views</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" onClick={openInNewTab} className="flex items-center gap-2">
+                <ExternalLink className="h-4 w-4" />
+                Open in new tab
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Permission Status */}
+        {permissionState === 'denied' && (
+          <Card className="mb-6 border-red-200 bg-red-50 dark:bg-red-900/20">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <Info className="h-5 w-5 text-red-600" />
+                <div>
+                  <p className="font-medium text-red-800 dark:text-red-200">Camera permission denied</p>
+                  <p className="text-sm text-red-700 dark:text-red-300">Please allow camera access in your browser settings and refresh the page</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Camera Error Display */}
+        {cameraError && isCameraActive && (
+          <Card className="mb-6 border-orange-200 bg-orange-50 dark:bg-orange-900/20">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <Info className="h-5 w-5 text-orange-600" />
+                <div>
+                  <p className="font-medium text-orange-800 dark:text-orange-200">Camera Issue</p>
+                  <p className="text-sm text-orange-700 dark:text-orange-300">{cameraError}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Scanning Tips */}
         {!selectedImage && !isCameraActive && <ScanningTips />}
 
@@ -478,7 +627,18 @@ const ScanClothes = () => {
                       <div className="text-center text-white">
                         <Camera className="h-12 w-12 mx-auto mb-2" />
                         <p className="text-lg font-semibold">Tap to start preview</p>
-                        <p className="text-sm opacity-75">Camera requires user interaction</p>
+                        <p className="text-sm opacity-75">
+                          {cameraError || "Camera requires user interaction"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {!isVideoReady && !needsPlayTrigger && (
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-lg">
+                      <div className="text-center text-white">
+                        <div className="animate-spin h-8 w-8 border-2 border-white border-t-transparent rounded-full mx-auto mb-2"></div>
+                        <p className="text-lg font-semibold">Preparing camera...</p>
+                        <p className="text-sm opacity-75">Getting video feed ready</p>
                       </div>
                     </div>
                   )}
