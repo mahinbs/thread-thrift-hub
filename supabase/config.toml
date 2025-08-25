@@ -1,1 +1,4 @@
 project_id = "jhgjztnauponaspmvjrq"
+
+[functions.analyze-clothing]
+verify_jwt = false

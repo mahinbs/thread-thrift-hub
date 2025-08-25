@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { Camera, Upload, Sparkles, DollarSign, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Camera, Upload, Sparkles, DollarSign, ArrowLeft, TrendingUp, Info, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,14 +7,33 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { supabase } from '@/integrations/supabase/client';
+import ScanningTips from '@/components/ScanningTips';
 
 interface ScanResult {
-  condition: 'Excellent' | 'Good' | 'Nice' | 'Fair';
+  condition: 'Excellent' | 'Good' | 'Fair' | 'Poor';
   confidence: number;
   estimatedValue: number;
   suggestions: string[];
   category: string;
-  brand?: string;
+  brand: string;
+  subcategory: string;
+  material: string;
+  conditionDetails: {
+    fabricQuality: string;
+    wearPatterns: string;
+    stains: string;
+    overallState: string;
+  };
+  marketInsights: {
+    demandLevel: string;
+    seasonalFactor: string;
+    priceRange: {
+      min: number;
+      max: number;
+      optimal: number;
+    };
+  };
 }
 
 const ScanClothes = () => {
@@ -29,50 +48,87 @@ const ScanClothes = () => {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [scanningStep, setScanningStep] = useState<string>('');
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
       case 'Excellent': return 'bg-green-500/10 text-green-700 border-green-200';
       case 'Good': return 'bg-blue-500/10 text-blue-700 border-blue-200';
-      case 'Nice': return 'bg-yellow-500/10 text-yellow-700 border-yellow-200';
-      case 'Fair': return 'bg-orange-500/10 text-orange-700 border-orange-200';
+      case 'Fair': return 'bg-yellow-500/10 text-yellow-700 border-yellow-200';
+      case 'Poor': return 'bg-red-500/10 text-red-700 border-red-200';
       default: return 'bg-muted';
     }
   };
 
-  const simulateAIScan = useCallback(async () => {
+  const performAIScan = useCallback(async () => {
+    if (!selectedImage) return;
+
     setIsScanning(true);
     setScanProgress(0);
+    setScanningStep('Preparing image for analysis...');
     
-    // Simulate AI processing with progress
-    for (let i = 0; i <= 100; i += 10) {
-      setScanProgress(i);
-      await new Promise(resolve => setTimeout(resolve, 200));
+    try {
+      // Progress updates with specific steps
+      const steps = [
+        'Analyzing image quality...',
+        'Detecting clothing items...',
+        'Assessing condition...',
+        'Identifying brand and category...',
+        'Calculating market value...',
+        'Generating recommendations...'
+      ];
+
+      for (let i = 0; i < steps.length; i++) {
+        setScanningStep(steps[i]);
+        setScanProgress((i + 1) * 15);
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
+
+      setScanProgress(95);
+      setScanningStep('Finalizing analysis...');
+
+      // Call the actual AI analysis edge function
+      const { data, error } = await supabase.functions.invoke('analyze-clothing', {
+        body: { image: selectedImage }
+      });
+
+      if (error) {
+        console.error('Error calling analyze-clothing function:', error);
+        throw new Error(error.message);
+      }
+
+      if (data.error) {
+        // Handle non-clothing items or other validation errors
+        toast({
+          title: "Invalid Image",
+          description: data.error,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const analysisResult = data.analysis;
+      setScanResult(analysisResult);
+      setScanProgress(100);
+      
+      toast({
+        title: "Analysis Complete!",
+        description: `Condition: ${analysisResult.condition} • Estimated Value: $${analysisResult.estimatedValue}`,
+      });
+
+    } catch (error) {
+      console.error('Error during AI scan:', error);
+      toast({
+        title: "Analysis Failed",
+        description: "Failed to analyze the image. Please try again with a clearer photo.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsScanning(false);
+      setScanningStep('');
+      setScanProgress(0);
     }
-    
-    // Mock AI result
-    const conditions: ('Excellent' | 'Good' | 'Nice' | 'Fair')[] = ['Excellent', 'Good', 'Nice', 'Fair'];
-    const mockResult: ScanResult = {
-      condition: conditions[Math.floor(Math.random() * conditions.length)],
-      confidence: 85 + Math.random() * 15,
-      estimatedValue: Math.floor(Math.random() * 80) + 20,
-      suggestions: [
-        'Clean any visible stains before listing',
-        'Take photos in natural light',
-        'Include brand details in description'
-      ],
-      category: 'T-Shirt',
-      brand: 'Nike'
-    };
-    
-    setScanResult(mockResult);
-    setIsScanning(false);
-    
-    toast({
-      title: "Scan Complete!",
-      description: `Condition: ${mockResult.condition} • Estimated Value: $${mockResult.estimatedValue}`,
-    });
-  }, [toast]);
+  }, [selectedImage, toast]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -129,13 +185,6 @@ const ScanClothes = () => {
     setIsCameraActive(false);
   };
 
-  const handleListOnPlatform = (platform: string) => {
-    toast({
-      title: `Listing on ${platform}`,
-      description: "Feature coming soon! You'll be able to list with one click.",
-    });
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -159,6 +208,9 @@ const ScanClothes = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Scanning Tips */}
+        {!selectedImage && !isCameraActive && <ScanningTips />}
+
         {/* Upload/Camera Section */}
         {!selectedImage && !isCameraActive && (
           <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -221,7 +273,7 @@ const ScanClothes = () => {
                 </AspectRatio>
                 <div className="flex justify-center gap-4 mt-4">
                   {!scanResult && !isScanning && (
-                    <Button onClick={simulateAIScan} size="lg" className="bg-primary hover:bg-primary/90">
+                    <Button onClick={performAIScan} size="lg" className="bg-primary hover:bg-primary/90">
                       <Sparkles className="h-5 w-5 mr-2" />
                       Scan with AI
                     </Button>
@@ -248,7 +300,7 @@ const ScanClothes = () => {
               <div className="text-center mb-4">
                 <Sparkles className="h-8 w-8 text-primary mx-auto mb-2 animate-spin" />
                 <h3 className="text-lg font-semibold">AI is analyzing your clothing...</h3>
-                <p className="text-muted-foreground">This may take a few seconds</p>
+                <p className="text-muted-foreground">{scanningStep}</p>
               </div>
               <Progress value={scanProgress} className="w-full" />
               <p className="text-center text-sm text-muted-foreground mt-2">
@@ -294,34 +346,121 @@ const ScanClothes = () => {
 
                 {/* Item Details */}
                 <div className="bg-muted/50 rounded-lg p-4">
-                  <h4 className="font-semibold mb-2">Item Details</h4>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <span className="text-muted-foreground">Category:</span>
-                    <span>{scanResult.category}</span>
-                    {scanResult.brand && (
-                      <>
-                        <span className="text-muted-foreground">Brand:</span>
-                        <span>{scanResult.brand}</span>
-                      </>
-                    )}
+                  <h4 className="font-semibold mb-3">Item Details</h4>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Category:</span>
+                      <p className="font-medium">{scanResult.category}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Brand:</span>
+                      <p className="font-medium">{scanResult.brand}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Material:</span>
+                      <p className="font-medium">{scanResult.material}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Subcategory:</span>
+                      <p className="font-medium">{scanResult.subcategory}</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Suggestions */}
+                {/* Condition Details */}
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <h4 className="font-semibold mb-3">Detailed Assessment</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Fabric Quality:</span>
+                      <span>{scanResult.conditionDetails.fabricQuality}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Wear Patterns:</span>
+                      <span>{scanResult.conditionDetails.wearPatterns}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Stains:</span>
+                      <span>{scanResult.conditionDetails.stains}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Overall State:</span>
+                      <span>{scanResult.conditionDetails.overallState}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Market Insights */}
+                <div className="bg-primary/5 rounded-lg p-4">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Market Insights
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Demand Level:</span>
+                      <Badge variant={scanResult.marketInsights.demandLevel === 'High' ? 'default' : 'secondary'}>
+                        {scanResult.marketInsights.demandLevel}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Seasonal Factor:</span>
+                      <span>{scanResult.marketInsights.seasonalFactor}</span>
+                    </div>
+                    <div className="mt-3">
+                      <span className="text-muted-foreground text-xs">Price Range:</span>
+                      <div className="flex justify-between text-sm font-medium mt-1">
+                        <span>Min: ${scanResult.marketInsights.priceRange.min}</span>
+                        <span className="text-primary">Optimal: ${scanResult.marketInsights.priceRange.optimal}</span>
+                        <span>Max: ${scanResult.marketInsights.priceRange.max}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Suggestions */}
                 <div>
-                  <h4 className="font-semibold mb-3">Suggestions to Maximize Value</h4>
-                  <ul className="space-y-2">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" />
+                    Suggestions to Maximize Value
+                  </h4>
+                  <ul className="space-y-3">
                     {scanResult.suggestions.map((suggestion, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm">
+                      <li key={index} className="flex items-start gap-3 text-sm">
                         <span className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
-                        {suggestion}
+                        <span>{suggestion}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <Button 
+                    onClick={() => {
+                      setSelectedImage(null);
+                      setScanResult(null);
+                    }}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Scan Another Item
+                  </Button>
+                  <Button 
+                    onClick={() => toast({
+                      title: "Coming Soon!",
+                      description: "Save scan results feature will be available soon."
+                    })}
+                    variant="default"
+                    className="flex-1"
+                  >
+                    <Info className="h-4 w-4 mr-2" />
+                    Save Results
+                  </Button>
+                </div>
               </CardContent>
             </Card>
-
           </div>
         )}
 
