@@ -49,6 +49,7 @@ const ScanClothes = () => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [scanningStep, setScanningStep] = useState<string>('');
+  const [needsPlayTrigger, setNeedsPlayTrigger] = useState(false);
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
@@ -230,33 +231,45 @@ const ScanClothes = () => {
       console.log('Setting up video stream...');
       setStream(mediaStream);
       setIsCameraActive(true);
+      setNeedsPlayTrigger(false);
 
       // Wait for video ref to be available
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+        const video = videoRef.current;
+        
+        // Programmatically set essential attributes for autoplay
+        video.muted = true;
+        video.playsInline = true;
+        video.autoplay = true;
+        
+        video.srcObject = mediaStream;
         
         // Add event listeners for better debugging
-        videoRef.current.onloadedmetadata = () => {
+        video.onloadedmetadata = () => {
           console.log('Video metadata loaded, dimensions:', 
-            videoRef.current?.videoWidth, 'x', videoRef.current?.videoHeight);
+            video.videoWidth, 'x', video.videoHeight);
         };
         
-        videoRef.current.oncanplay = () => {
+        video.oncanplay = async () => {
           console.log('Video can play');
+          try {
+            await video.play();
+            console.log('Video playback started successfully');
+            setNeedsPlayTrigger(false);
+          } catch (playError) {
+            console.error('Video play error:', playError);
+            setNeedsPlayTrigger(true);
+          }
         };
         
         // Ensure video plays with proper attributes
         try {
-          await videoRef.current.play();
+          await video.play();
           console.log('Video playback started successfully');
+          setNeedsPlayTrigger(false);
         } catch (playError) {
           console.error('Video play error:', playError);
-          // Try to play again after a short delay
-          setTimeout(() => {
-            if (videoRef.current) {
-              videoRef.current.play().catch(console.error);
-            }
-          }, 100);
+          setNeedsPlayTrigger(true);
         }
       } else {
         console.error('Video ref not available');
@@ -312,12 +325,28 @@ const ScanClothes = () => {
     }
   };
 
+  const handlePlayTrigger = async () => {
+    if (videoRef.current) {
+      try {
+        await videoRef.current.play();
+        setNeedsPlayTrigger(false);
+        console.log('Video playback started after user interaction');
+      } catch (error) {
+        console.error('Failed to start video after user trigger:', error);
+      }
+    }
+  };
+
   const stopCamera = () => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
     setIsCameraActive(false);
+    setNeedsPlayTrigger(false);
   };
 
   return (
@@ -380,9 +409,21 @@ const ScanClothes = () => {
                     muted
                     className="w-full h-full object-cover rounded-lg bg-muted"
                   />
+                  {needsPlayTrigger && (
+                    <div 
+                      className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center rounded-lg cursor-pointer"
+                      onClick={handlePlayTrigger}
+                    >
+                      <div className="text-center text-white">
+                        <Camera className="h-12 w-12 mx-auto mb-2" />
+                        <p className="text-lg font-semibold">Tap to start preview</p>
+                        <p className="text-sm opacity-75">Camera requires user interaction</p>
+                      </div>
+                    </div>
+                  )}
                 </AspectRatio>
                 <div className="flex justify-center gap-4 mt-4">
-                  <Button onClick={capturePhoto} size="lg">
+                  <Button onClick={capturePhoto} size="lg" disabled={needsPlayTrigger}>
                     <Camera className="h-5 w-5 mr-2" />
                     Capture
                   </Button>
