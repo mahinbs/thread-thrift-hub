@@ -173,6 +173,12 @@ const ScanClothes = () => {
     try {
       // Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        // Fallback for older browsers or restricted environments
+        if (fileInputRef.current) {
+          fileInputRef.current.setAttribute('capture', 'environment');
+          fileInputRef.current.click();
+          return;
+        }
         toast({
           title: "Camera Not Supported",
           description: "Your browser doesn't support camera access. Please upload an image instead.",
@@ -181,52 +187,98 @@ const ScanClothes = () => {
         return;
       }
 
-      // Try multiple camera constraints for better compatibility
+      // Enhanced constraints for better compatibility
       const constraints = [
+        { 
+          video: { 
+            facingMode: 'environment', 
+            width: { min: 640, ideal: 1280, max: 1920 }, 
+            height: { min: 480, ideal: 720, max: 1080 },
+            frameRate: { ideal: 30, max: 60 }
+          } 
+        },
         { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
         { video: { facingMode: 'environment' } },
         { video: { width: { ideal: 1280 }, height: { ideal: 720 } } },
+        { video: { width: { min: 640 }, height: { min: 480 } } },
         { video: true }
       ];
 
       let mediaStream = null;
       let lastError = null;
 
-      for (const constraint of constraints) {
+      console.log('Attempting to access camera...');
+      
+      for (let i = 0; i < constraints.length; i++) {
+        const constraint = constraints[i];
         try {
+          console.log(`Trying constraint ${i + 1}:`, constraint);
           mediaStream = await navigator.mediaDevices.getUserMedia(constraint);
+          console.log('Camera access successful with constraint:', constraint);
           break;
-        } catch (err) {
+        } catch (err: any) {
           lastError = err;
-          console.log('Camera constraint failed:', constraint, err);
+          console.log(`Camera constraint ${i + 1} failed:`, constraint, err.name, err.message);
         }
       }
 
       if (!mediaStream) {
+        console.error('All camera constraints failed. Last error:', lastError);
         throw lastError || new Error('Failed to access camera');
       }
 
+      console.log('Setting up video stream...');
       setStream(mediaStream);
+      setIsCameraActive(true);
+
+      // Wait for video ref to be available
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        // Ensure video plays
-        videoRef.current.play().catch(console.error);
+        
+        // Add event listeners for better debugging
+        videoRef.current.onloadedmetadata = () => {
+          console.log('Video metadata loaded, dimensions:', 
+            videoRef.current?.videoWidth, 'x', videoRef.current?.videoHeight);
+        };
+        
+        videoRef.current.oncanplay = () => {
+          console.log('Video can play');
+        };
+        
+        // Ensure video plays with proper attributes
+        try {
+          await videoRef.current.play();
+          console.log('Video playback started successfully');
+        } catch (playError) {
+          console.error('Video play error:', playError);
+          // Try to play again after a short delay
+          setTimeout(() => {
+            if (videoRef.current) {
+              videoRef.current.play().catch(console.error);
+            }
+          }, 100);
+        }
+      } else {
+        console.error('Video ref not available');
       }
-      setIsCameraActive(true);
       
     } catch (error: any) {
       console.error('Camera error:', error);
       
       let errorMessage = "Unable to access camera. Please try uploading an image instead.";
+      let showFallback = false;
       
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        errorMessage = "Camera permission denied. Please allow camera access and try again, or upload an image instead.";
+        errorMessage = "Camera permission denied. Please allow camera access in your browser settings and try again.";
+        showFallback = true;
       } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
         errorMessage = "No camera found on this device. Please upload an image instead.";
+        showFallback = true;
       } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
         errorMessage = "Camera is being used by another application. Please close other apps and try again.";
       } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
-        errorMessage = "Camera settings not supported. Please upload an image instead.";
+        errorMessage = "Camera settings not supported on this device. Please upload an image instead.";
+        showFallback = true;
       }
       
       toast({
@@ -234,6 +286,13 @@ const ScanClothes = () => {
         description: errorMessage,
         variant: "destructive"
       });
+      
+      // If fallback needed, trigger file input after a brief delay
+      if (showFallback) {
+        setTimeout(() => {
+          fileInputRef.current?.click();
+        }, 2000);
+      }
     }
   };
 
@@ -318,7 +377,8 @@ const ScanClothes = () => {
                     ref={videoRef}
                     autoPlay
                     playsInline
-                    className="w-full h-full object-cover rounded-lg"
+                    muted
+                    className="w-full h-full object-cover rounded-lg bg-muted"
                   />
                 </AspectRatio>
                 <div className="flex justify-center gap-4 mt-4">
