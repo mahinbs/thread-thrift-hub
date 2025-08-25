@@ -108,6 +108,33 @@ const ScanClothes = () => {
       }
 
       const analysisResult = data.analysis;
+      
+      // Additional frontend validation for confidence threshold
+      if (analysisResult.confidence < 70) {
+        toast({
+          title: "Low Confidence Analysis",
+          description: "The image quality may be too low for accurate analysis. Please try with a clearer, well-lit photo.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check if it's actually a clothing category
+      const clothingKeywords = ['shirt', 't-shirt', 'dress', 'pants', 'jeans', 'jacket', 'coat', 'sweater', 'blouse', 'skirt', 'shorts', 'shoe', 'boot', 'sneaker', 'bag', 'purse', 'jewelry', 'watch', 'belt', 'hat', 'scarf', 'sunglass'];
+      const hasClothingKeyword = clothingKeywords.some(keyword => 
+        analysisResult.category.toLowerCase().includes(keyword) || 
+        analysisResult.subcategory.toLowerCase().includes(keyword)
+      );
+      
+      if (!hasClothingKeyword) {
+        toast({
+          title: "Not a Clothing Item",
+          description: "Please upload an image of clothing, shoes, bags, or fashion accessories.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       setScanResult(analysisResult);
       setScanProgress(100);
       
@@ -144,18 +171,67 @@ const ScanClothes = () => {
 
   const startCamera = async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      });
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast({
+          title: "Camera Not Supported",
+          description: "Your browser doesn't support camera access. Please upload an image instead.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Try multiple camera constraints for better compatibility
+      const constraints = [
+        { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
+        { video: { facingMode: 'environment' } },
+        { video: { width: { ideal: 1280 }, height: { ideal: 720 } } },
+        { video: true }
+      ];
+
+      let mediaStream = null;
+      let lastError = null;
+
+      for (const constraint of constraints) {
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia(constraint);
+          break;
+        } catch (err) {
+          lastError = err;
+          console.log('Camera constraint failed:', constraint, err);
+        }
+      }
+
+      if (!mediaStream) {
+        throw lastError || new Error('Failed to access camera');
+      }
+
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        // Ensure video plays
+        videoRef.current.play().catch(console.error);
       }
       setIsCameraActive(true);
-    } catch (error) {
+      
+    } catch (error: any) {
+      console.error('Camera error:', error);
+      
+      let errorMessage = "Unable to access camera. Please try uploading an image instead.";
+      
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage = "Camera permission denied. Please allow camera access and try again, or upload an image instead.";
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage = "No camera found on this device. Please upload an image instead.";
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorMessage = "Camera is being used by another application. Please close other apps and try again.";
+      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+        errorMessage = "Camera settings not supported. Please upload an image instead.";
+      }
+      
       toast({
         title: "Camera Error",
-        description: "Unable to access camera. Please try uploading an image instead.",
+        description: errorMessage,
         variant: "destructive"
       });
     }

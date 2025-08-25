@@ -38,7 +38,11 @@ interface ClothingAnalysisResult {
 const analyzeWithGemini = async (imageBase64: string): Promise<ClothingAnalysisResult> => {
   const prompt = `You are an expert clothing appraiser and resale market specialist. Analyze this image in detail and provide a comprehensive assessment.
 
-CRITICAL: First determine if this image shows clothing, shoes, bags, jewelry, or styling accessories. If it shows anything else (furniture, electronics, food, animals, people without focus on clothing, etc.), respond with isValidClothingItem: false and appropriate error message.
+CRITICAL VALIDATION RULES:
+- ONLY accept images showing: clothing, shoes, bags, jewelry, watches, sunglasses, belts, scarves, hats, or other wearable fashion accessories
+- REJECT everything else including: screenshots, webpages, documents, furniture, electronics, food, animals, people (unless clearly focused on clothing), nature, vehicles, etc.
+- Be EXTREMELY strict - if there's any doubt, set isValidClothingItem to false
+- For screenshots or web pages, always respond with isValidClothingItem: false
 
 If it IS a valid clothing/styling item, provide detailed analysis:
 
