@@ -1,22 +1,42 @@
 import { useState } from 'react';
-import { Camera, Sparkles, Upload } from 'lucide-react';
+import { Camera, Sparkles, Upload, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AIScanner = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isScanning] = useState(false);
 
   const handleScanClick = () => {
-    navigate('/scan');
+    if (user) {
+      navigate('/scan');
+    } else {
+      navigate('/auth', { 
+        state: { 
+          message: 'Please sign in to access the AI scanner',
+          returnTo: '/scan'
+        } 
+      });
+    }
   };
 
   const handleUploadClick = () => {
-    navigate('/scan');
+    if (user) {
+      navigate('/scan');
+    } else {
+      navigate('/auth', { 
+        state: { 
+          message: 'Please sign in to access the AI scanner',
+          returnTo: '/scan'
+        } 
+      });
+    }
   };
 
   return (

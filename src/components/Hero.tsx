@@ -2,10 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Recycle, Heart, Leaf, Sparkles, TrendingUp, Globe, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-clothes.jpg";
 
 const Hero = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleExploreAISearch = () => {
     // Smooth scroll to the search section
@@ -95,7 +99,18 @@ const Hero = () => {
               variant="neon" 
               size="lg" 
               className="text-xl px-16 py-8 font-bold tracking-wide hover-tilt"
-              onClick={handleExploreAISearch}
+              onClick={() => {
+                if (user) {
+                  navigate('/scan');
+                } else {
+                  navigate('/auth', { 
+                    state: { 
+                      message: 'Please sign in to access the AI scanner',
+                      returnTo: '/scan'
+                    } 
+                  });
+                }
+              }}
             >
               Start Scanning 📱
               <Sparkles className="ml-3 h-6 w-6" />
@@ -104,8 +119,20 @@ const Hero = () => {
               variant="glass" 
               size="lg" 
               className="text-xl px-12 py-8 font-semibold backdrop-blur-md"
+              onClick={() => {
+                if (user) {
+                  navigate('/sell');
+                } else {
+                  navigate('/auth', { 
+                    state: { 
+                      message: 'Please sign in to start selling your clothes',
+                      returnTo: '/sell'
+                    } 
+                  });
+                }
+              }}
             >
-              Watch Demo 🎬
+              Start Selling 💰
             </Button>
           </div>
 

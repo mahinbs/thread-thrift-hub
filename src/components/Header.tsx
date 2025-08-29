@@ -143,16 +143,44 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="flex items-center space-x-2">
-          <Button variant="glass" size="sm" className="hidden md:flex hover-tilt font-semibold" asChild>
-            <Link to="/scan">
-              <Camera className="h-4 w-4 mr-2" />
-              📱 Scan
-            </Link>
+          <Button 
+            variant="glass" 
+            size="sm" 
+            className="hidden md:flex hover-tilt font-semibold" 
+            onClick={() => {
+              if (user) {
+                navigate('/scan');
+              } else {
+                navigate('/auth', { 
+                  state: { 
+                    message: 'Please sign in to access the AI scanner',
+                    returnTo: '/scan'
+                  } 
+                });
+              }
+            }}
+          >
+            <Camera className="h-4 w-4 mr-2" />
+            📱 Scan
           </Button>
-          <Button variant="outline" size="sm" className="hover-tilt" asChild>
-            <Link to="/sell">
-              💰 Sell
-            </Link>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="hover-tilt" 
+            onClick={() => {
+              if (user) {
+                navigate('/sell');
+              } else {
+                navigate('/auth', { 
+                  state: { 
+                    message: 'Please sign in to start selling your clothes',
+                    returnTo: '/sell'
+                  } 
+                });
+              }
+            }}
+          >
+            💰 Sell
           </Button>
           
           {user ? (

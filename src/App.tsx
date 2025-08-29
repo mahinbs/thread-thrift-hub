@@ -19,6 +19,7 @@ import UserManagement from "./pages/admin/UserManagement";
 import MediaLibrary from "./pages/admin/MediaLibrary";
 import Settings from "./pages/admin/Settings";
 import AdminProtectedRoute from "./components/admin/AdminProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Collections from "./pages/Collections";
 import ProductDetail from "./pages/ProductDetail";
 import NotFound from "./pages/NotFound";
@@ -34,8 +35,16 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/sell" element={<Sell />} />
-            <Route path="/scan" element={<ScanClothes />} />
+            <Route path="/sell" element={
+              <ProtectedRoute>
+                <Sell />
+              </ProtectedRoute>
+            } />
+            <Route path="/scan" element={
+              <ProtectedRoute>
+                <ScanClothes />
+              </ProtectedRoute>
+            } />
             <Route path="/auth" element={<Auth />} />
             <Route path="/collections" element={<Collections />} />
             <Route path="/collections/:category" element={<Collections />} />

@@ -55,6 +55,31 @@ const ScanClothes = () => {
   const [permissionState, setPermissionState] = useState<string>('checking');
   const [isInIframe, setIsInIframe] = useState(false);
   const [watchdogTimeout, setWatchdogTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [savedScans, setSavedScans] = useState<Array<ScanResult & { id: string; image: string; savedAt: Date }>>([]);
+  const [showSavedScans, setShowSavedScans] = useState(false);
+
+  // Load saved scans from localStorage on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('savedScans');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Convert savedAt back to Date objects
+        const scansWithDates = parsed.map((scan: any) => ({
+          ...scan,
+          savedAt: new Date(scan.savedAt)
+        }));
+        setSavedScans(scansWithDates);
+      } catch (error) {
+        console.error('Error loading saved scans:', error);
+      }
+    }
+  }, []);
+
+  // Save scans to localStorage whenever savedScans changes
+  useEffect(() => {
+    localStorage.setItem('savedScans', JSON.stringify(savedScans));
+  }, [savedScans]);
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
@@ -64,6 +89,33 @@ const ScanClothes = () => {
       case 'Poor': return 'bg-red-500/10 text-red-700 border-red-200';
       default: return 'bg-muted';
     }
+  };
+
+  const saveScanResult = () => {
+    if (!scanResult || !selectedImage) return;
+    
+    const newScan = {
+      ...scanResult,
+      id: Date.now().toString(),
+      image: selectedImage,
+      savedAt: new Date()
+    };
+    
+    setSavedScans(prev => [newScan, ...prev]);
+    
+    toast({
+      title: "Scan Saved! 📸",
+      description: "Your scan result has been saved successfully.",
+    });
+  };
+
+  const deleteSavedScan = (id: string) => {
+    setSavedScans(prev => prev.filter(scan => scan.id !== id));
+    
+    toast({
+      title: "Scan Deleted",
+      description: "The saved scan has been removed.",
+    });
   };
 
   const checkVideoReady = useCallback(() => {
@@ -320,21 +372,30 @@ const ScanClothes = () => {
 
   const startCamera = async () => {
     try {
+      console.log('Starting camera...');
+      
       // Stop any existing streams first
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
       
       setCameraError(null);
+      setIsCameraActive(true);
+      setIsVideoReady(false);
+      setNeedsPlayTrigger(false);
+      
+      // Check if we're on HTTPS or localhost (required for camera access)
+      if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        toast({
+          title: "HTTPS Required",
+          description: "Camera access requires HTTPS. Please use the upload option instead.",
+          variant: "destructive"
+        });
+        return;
+      }
       
       // Check if getUserMedia is supported
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        // Fallback for older browsers or restricted environments
-        if (fileInputRef.current) {
-          fileInputRef.current.setAttribute('capture', 'environment');
-          fileInputRef.current.click();
-          return;
-        }
         toast({
           title: "Camera Not Supported",
           description: "Your browser doesn't support camera access. Please upload an image instead.",
@@ -343,151 +404,218 @@ const ScanClothes = () => {
         return;
       }
 
-      // Enhanced constraints for better compatibility
-      const constraints = [
-        { 
-          video: { 
-            facingMode: 'environment', 
-            width: { min: 640, ideal: 1280, max: 1920 }, 
-            height: { min: 480, ideal: 720, max: 1080 },
-            frameRate: { ideal: 30, max: 60 }
-          } 
-        },
-        { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
-        { video: { facingMode: 'environment' } },
-        { video: { width: { ideal: 1280 }, height: { ideal: 720 } } },
-        { video: { width: { min: 640 }, height: { min: 480 } } },
-        { video: true }
-      ];
-
-      let mediaStream = null;
-      let lastError = null;
-
-      console.log('Attempting to access camera...');
-      
-      for (let i = 0; i < constraints.length; i++) {
-        const constraint = constraints[i];
-        try {
-          console.log(`Trying constraint ${i + 1}:`, constraint);
-          mediaStream = await navigator.mediaDevices.getUserMedia(constraint);
-          console.log('Camera access successful with constraint:', constraint);
-          break;
-        } catch (err: any) {
-          lastError = err;
-          console.log(`Camera constraint ${i + 1} failed:`, constraint, err.name, err.message);
+      // Request camera permission first
+      try {
+        const permission = await navigator.permissions.query({ name: 'camera' as PermissionName });
+        console.log('Camera permission state:', permission.state);
+        if (permission.state === 'denied') {
+          setPermissionState('denied');
+          toast({
+            title: "Camera Permission Denied",
+            description: "Please allow camera access in your browser settings and refresh the page.",
+            variant: "destructive"
+          });
+          return;
         }
+      } catch (permError) {
+        console.log('Permission API not available, proceeding with camera access');
       }
 
-      if (!mediaStream) {
-        console.error('All camera constraints failed. Last error:', lastError);
-        throw lastError || new Error('Failed to access camera');
-      }
+      // Very basic constraints for maximum compatibility
+      const constraints = {
+        video: true
+      };
 
-      console.log('Setting up video stream...');
+      console.log('Requesting camera access with constraints:', constraints);
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      console.log('Camera access successful, stream tracks:', mediaStream.getTracks().map(t => ({ kind: t.kind, label: t.label })));
       setStream(mediaStream);
-      setIsCameraActive(true);
-      setNeedsPlayTrigger(false);
-      setIsVideoReady(false);
 
-      // Wait for video ref to be available
-      if (videoRef.current) {
-        const video = videoRef.current;
-        
-        // Programmatically set essential attributes for autoplay
-        video.muted = true;
-        video.playsInline = true;
-        video.autoplay = true;
-        
-        video.srcObject = mediaStream;
-        
-        // Start the readiness watchdog
-        startVideoWatchdog();
-        
-        // Add event listeners for better debugging
-        video.onloadedmetadata = () => {
-          console.log('Video metadata loaded, dimensions:', 
-            video.videoWidth, 'x', video.videoHeight);
-          checkVideoReady();
-        };
-        
-        video.oncanplay = async () => {
-          console.log('Video can play');
-          checkVideoReady();
+              // Set up video element
+        if (videoRef.current) {
+          const video = videoRef.current;
+          
+          console.log('Setting up video element...');
+          
+          // Essential video attributes
+          video.muted = true;
+          video.playsInline = true;
+          video.autoplay = true;
+          
+          // Set the stream as source
+          video.srcObject = mediaStream;
+          
+          // Force video to load and play immediately
+          video.load();
+          
+          // Try to play immediately
           try {
             await video.play();
-            console.log('Video playback started successfully');
+            console.log('Video playback started immediately');
+            setIsVideoReady(true);
             setNeedsPlayTrigger(false);
             setCameraError(null);
           } catch (playError) {
-            console.error('Video play error:', playError);
+            console.log('Immediate play failed, will need user interaction:', playError);
             setNeedsPlayTrigger(true);
-            setCameraError('Camera preview requires user interaction to start.');
+            setCameraError('Tap to start camera preview');
           }
-        };
-        
-        // Additional event to ensure we catch when video dimensions are available
-        video.onloadeddata = () => {
-          console.log('Video data loaded');
-          checkVideoReady();
-        };
-        
-        // Use requestVideoFrameCallback if available
-        if ('requestVideoFrameCallback' in video) {
-          (video as any).requestVideoFrameCallback(() => {
+          
+          // Event listeners with better error handling
+          video.onloadedmetadata = () => {
+            console.log('Video metadata loaded:', video.videoWidth, 'x', video.videoHeight);
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+              console.log('Video dimensions are valid, setting ready state immediately');
+              setIsVideoReady(true);
+              setNeedsPlayTrigger(false);
+              setCameraError(null);
+              
+              // Try to play again if not already playing
+              if (video.paused) {
+                video.play().catch(err => console.log('Play attempt failed:', err));
+              }
+            }
+          };
+          
+          video.oncanplay = async () => {
+            console.log('Video can play event fired');
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+              console.log('Video can play with valid dimensions');
+              setIsVideoReady(true);
+              setNeedsPlayTrigger(false);
+              setCameraError(null);
+              
+              // Try to play the video
+              try {
+                await video.play();
+                console.log('Video playback started successfully');
+                setNeedsPlayTrigger(false);
+                setCameraError(null);
+              } catch (playError) {
+                console.log('Video play failed, will need user interaction:', playError);
+                setNeedsPlayTrigger(true);
+                setCameraError('Tap to start camera preview');
+              }
+            }
+          };
+          
+          video.onloadeddata = () => {
+            console.log('Video data loaded event fired');
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+              console.log('Video data loaded with valid dimensions');
+              setIsVideoReady(true);
+              setNeedsPlayTrigger(false);
+              setCameraError(null);
+            }
+          };
+          
+          // Additional event to catch when video actually starts playing
+          video.onplay = () => {
+            console.log('Video play event fired - video is now playing');
             setIsVideoReady(true);
-            console.log('First video frame received');
-          });
+            setNeedsPlayTrigger(false);
+            setCameraError(null);
+          };
+          
+          video.onplaying = () => {
+            console.log('Video playing event fired - video is actively playing');
+            setIsVideoReady(true);
+            setNeedsPlayTrigger(false);
+            setCameraError(null);
+          };
+          
+          video.onerror = (error) => {
+            console.error('Video error event:', error);
+            setCameraError('Video loading error occurred');
+          };
+          
+          video.onstalled = () => {
+            console.log('Video stalled event');
+          };
+          
+          video.onwaiting = () => {
+            console.log('Video waiting event');
+          };
+          
+          // More aggressive state checking - check immediately and then periodically
+          const immediateCheck = () => {
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+              console.log('Immediate check: Video ready, updating state');
+              setIsVideoReady(true);
+              setNeedsPlayTrigger(false);
+              setCameraError(null);
+              return true;
+            }
+            return false;
+          };
+          
+          // Check immediately
+          if (immediateCheck()) {
+            console.log('Video was ready immediately');
+          } else {
+            // Set a timeout to check if video loads
+            setTimeout(() => {
+              if (video.videoWidth === 0 || video.videoHeight === 0) {
+                console.log('Video dimensions still zero after timeout, checking stream');
+                if (mediaStream && mediaStream.active) {
+                  console.log('Stream is active, forcing video check');
+                  video.load();
+                  
+                  // Additional fallback: try to restart the stream
+                  setTimeout(() => {
+                    if (video.videoWidth === 0 || video.videoHeight === 0) {
+                      console.log('Video still not loading, attempting stream restart');
+                      stopCamera();
+                      setTimeout(() => startCamera(), 500);
+                    }
+                  }, 3000);
+                } else {
+                  console.log('Stream is not active');
+                  setCameraError('Camera stream is not active');
+                }
+              }
+            }, 1000); // Reduced from 2000ms to 1000ms
+          }
+          
+          // Periodic state check to ensure UI updates - more frequent for better responsiveness
+          const stateCheckInterval = setInterval(() => {
+            if (video.videoWidth > 0 && video.videoHeight > 0 && !isVideoReady) {
+              console.log('Periodic check: Video has dimensions but UI not updated, fixing...');
+              setIsVideoReady(true);
+              setNeedsPlayTrigger(false);
+              setCameraError(null);
+              clearInterval(stateCheckInterval);
+            }
+          }, 200); // Reduced from 500ms to 200ms for faster response
+          
+          // Clean up interval after 5 seconds (reduced from 10 seconds)
+          setTimeout(() => clearInterval(stateCheckInterval), 5000);
         }
-        
-        // Ensure video plays with proper attributes
-        try {
-          await video.play();
-          console.log('Video playback started successfully');
-          setNeedsPlayTrigger(false);
-          setCameraError(null);
-        } catch (playError) {
-          console.error('Video play error:', playError);
-          setNeedsPlayTrigger(true);
-          setCameraError('Camera preview requires user interaction to start.');
-        }
-      } else {
-        console.error('Video ref not available');
-      }
       
     } catch (error: any) {
       console.error('Camera error:', error);
       
       let errorMessage = "Unable to access camera. Please try uploading an image instead.";
-      let showFallback = false;
       
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        errorMessage = "Camera permission denied. Please allow camera access in your browser settings and try again.";
-        showFallback = true;
+        errorMessage = "Camera permission denied. Please allow camera access and try again.";
         setPermissionState('denied');
-      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+      } else if (error.name === 'NotFoundError') {
         errorMessage = "No camera found on this device. Please upload an image instead.";
-        showFallback = true;
-      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+      } else if (error.name === 'NotReadableError') {
         errorMessage = "Camera is being used by another application. Please close other apps and try again.";
-      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
-        errorMessage = "Camera settings not supported on this device. Please upload an image instead.";
-        showFallback = true;
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage = "Camera settings not supported. Please upload an image instead.";
       }
       
-      setCameraError(`${error.name}: ${error.message}`);
+      setCameraError(errorMessage);
       
       toast({
         title: "Camera Error",
         description: errorMessage,
         variant: "destructive"
       });
-      
-      // If fallback needed, trigger file input after a brief delay
-      if (showFallback) {
-        setTimeout(() => {
-          fileInputRef.current?.click();
-        }, 2000);
-      }
     }
   };
 
@@ -642,6 +770,24 @@ const ScanClothes = () => {
           </Card>
         )}
 
+        {/* Camera Help */}
+        {!selectedImage && !isCameraActive && (
+          <Card className="mb-6 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <Info className="h-5 w-5 text-blue-600" />
+                <div>
+                  <p className="font-medium text-blue-800 dark:text-blue-200">Camera Access</p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    When you click "Take Photo", your browser will ask for camera permission. 
+                    Allow access to use the camera scanner.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Camera Error Display */}
         {cameraError && isCameraActive && (
           <Card className="mb-6 border-orange-200 bg-orange-50 dark:bg-orange-900/20">
@@ -673,9 +819,12 @@ const ScanClothes = () => {
 
             <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={startCamera}>
               <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                <Camera className="h-12 w-12 text-muted-foreground mb-4" />
+                <Camera className="h-12 w-12 text-primary mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Take Photo</h3>
                 <p className="text-muted-foreground">Use your camera to scan clothes</p>
+                <div className="mt-2 text-xs text-primary/70">
+                  Camera permission required
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -693,6 +842,40 @@ const ScanClothes = () => {
                     playsInline
                     muted
                     className="w-full h-full object-cover rounded-lg bg-muted"
+                    style={{ transform: 'scaleX(-1)' }} // Mirror the camera view
+                    onLoadStart={() => console.log('Video load start')}
+                    onLoadedMetadata={() => {
+                      console.log('Video loaded metadata');
+                      if (videoRef.current && videoRef.current.videoWidth > 0) {
+                        setIsVideoReady(true);
+                        setNeedsPlayTrigger(false);
+                      }
+                    }}
+                    onCanPlay={() => {
+                      console.log('Video can play');
+                      if (videoRef.current && videoRef.current.videoWidth > 0) {
+                        setIsVideoReady(true);
+                        setNeedsPlayTrigger(false);
+                      }
+                    }}
+                    onLoadedData={() => {
+                      console.log('Video loaded data');
+                      if (videoRef.current && videoRef.current.videoWidth > 0) {
+                        setIsVideoReady(true);
+                        setNeedsPlayTrigger(false);
+                      }
+                    }}
+                    onPlay={() => {
+                      console.log('Video play event');
+                      setIsVideoReady(true);
+                      setNeedsPlayTrigger(false);
+                    }}
+                    onPlaying={() => {
+                      console.log('Video playing event');
+                      setIsVideoReady(true);
+                      setNeedsPlayTrigger(false);
+                    }}
+                    onError={(e) => console.error('Video error:', e)}
                   />
                   {needsPlayTrigger && (
                     <div 
@@ -714,6 +897,36 @@ const ScanClothes = () => {
                         <div className="animate-spin h-8 w-8 border-2 border-white border-t-transparent rounded-full mx-auto mb-2"></div>
                         <p className="text-lg font-semibold">Preparing camera...</p>
                         <p className="text-sm opacity-75">Getting video feed ready</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="mt-3 text-white border-white hover:bg-white hover:text-black"
+                          onClick={() => {
+                            console.log('Manual retry clicked');
+                            if (videoRef.current && stream) {
+                              // Force refresh the video element
+                              videoRef.current.srcObject = null;
+                              setTimeout(() => {
+                                if (videoRef.current && stream) {
+                                  videoRef.current.srcObject = stream;
+                                  videoRef.current.load();
+                                  
+                                  // Force state update after a short delay
+                                  setTimeout(() => {
+                                    if (videoRef.current && videoRef.current.videoWidth > 0) {
+                                      console.log('Manual retry: Video ready, updating state');
+                                      setIsVideoReady(true);
+                                      setNeedsPlayTrigger(false);
+                                      setCameraError(null);
+                                    }
+                                  }, 1000);
+                                }
+                              }, 100);
+                            }
+                          }}
+                        >
+                          Retry
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -725,6 +938,24 @@ const ScanClothes = () => {
                   </Button>
                   <Button variant="outline" onClick={stopCamera}>
                     Cancel
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      console.log('Debug info:');
+                      console.log('Video ref:', videoRef.current);
+                      console.log('Stream:', stream);
+                      console.log('Video ready:', isVideoReady);
+                      console.log('Needs play trigger:', needsPlayTrigger);
+                      if (videoRef.current) {
+                        console.log('Video dimensions:', videoRef.current.videoWidth, 'x', videoRef.current.videoHeight);
+                        console.log('Video readyState:', videoRef.current.readyState);
+                        console.log('Video paused:', videoRef.current.paused);
+                      }
+                    }}
+                  >
+                    Debug
                   </Button>
                 </div>
               </div>
@@ -921,19 +1152,318 @@ const ScanClothes = () => {
                     Scan Another Item
                   </Button>
                   <Button 
-                    onClick={() => toast({
-                      title: "Coming Soon!",
-                      description: "Save scan results feature will be available soon."
-                    })}
+                    onClick={saveScanResult}
                     variant="default"
                     className="flex-1"
                   >
                     <Info className="h-4 w-4 mr-2" />
                     Save Results
                   </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => {
+                        // Create comprehensive listing template for eBay
+                        const title = `${scanResult.brand} ${scanResult.category} - ${scanResult.condition} Condition`;
+                        const description = `${scanResult.brand} ${scanResult.subcategory} in ${scanResult.condition.toLowerCase()} condition.
+
+MATERIAL: ${scanResult.material}
+CONDITION: ${scanResult.condition} (${scanResult.confidence.toFixed(1)}% confidence)
+AI ANALYSIS: ${scanResult.conditionDetails.overallState}
+
+DETAILED ASSESSMENT:
+• Fabric Quality: ${scanResult.conditionDetails.fabricQuality}
+• Wear Patterns: ${scanResult.conditionDetails.wearPatterns}
+• Stains: ${scanResult.conditionDetails.stains}
+
+MARKET INSIGHTS:
+• Demand Level: ${scanResult.marketInsights.demandLevel}
+• Seasonal Factor: ${scanResult.marketInsights.seasonalFactor}
+• Price Range: $${scanResult.marketInsights.priceRange.min} - $${scanResult.marketInsights.priceRange.max}
+
+AI RECOMMENDATIONS:
+${scanResult.suggestions.map(suggestion => `• ${suggestion}`).join('\n')}
+
+Estimated Value: $${scanResult.estimatedValue}`;
+                        
+                        // Copy listing details to clipboard
+                        navigator.clipboard.writeText(`Title: ${title}\n\nDescription:\n${description}\n\nPrice: $${scanResult.estimatedValue}\nCondition: ${scanResult.condition}\nCategory: ${scanResult.category}`);
+                        
+                        // Open eBay listing creation page
+                        window.open('https://www.ebay.com/sh/lst/active?action=add', '_blank');
+                        
+                        toast({
+                          title: "eBay Listing Template Copied! 📋",
+                          description: "Listing details copied to clipboard. eBay Create Listing page opened in new tab.",
+                        });
+                      }}
+                      variant="outline"
+                      className="flex-1 border-orange-500 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
+                    >
+                      <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.1 4.8c-.6 0-1.1.2-1.5.6L9.3 12.7l-1.1-1.1c-.4-.4-.9-.6-1.5-.6s-1.1.2-1.5.6c-.4.4-.6.9-.6 1.5s.2 1.1.6 1.5l3.2 3.2c.4.4.9.6 1.5.6s1.1-.2 1.5-.6l8.3-8.3c.4-.4.6-.9.6-1.5s-.2-1.1-.6-1.5c-.4-.4-.9-.6-1.5-.6z"/>
+                      </svg>
+                      Copy & Open eBay
+                    </Button>
+                    
+                    <Button 
+                      onClick={() => {
+                        // Show listing details in a modal or expandable section
+                        const listingDetails = `Title: ${scanResult.brand} ${scanResult.category} - ${scanResult.condition} Condition
+
+Description:
+${scanResult.brand} ${scanResult.subcategory} in ${scanResult.condition.toLowerCase()} condition.
+
+MATERIAL: ${scanResult.material}
+CONDITION: ${scanResult.condition} (${scanResult.confidence.toFixed(1)}% confidence)
+AI ANALYSIS: ${scanResult.conditionDetails.overallState}
+
+DETAILED ASSESSMENT:
+• Fabric Quality: ${scanResult.conditionDetails.fabricQuality}
+• Wear Patterns: ${scanResult.conditionDetails.wearPatterns}
+• Stains: ${scanResult.conditionDetails.stains}
+
+MARKET INSIGHTS:
+• Demand Level: ${scanResult.marketInsights.demandLevel}
+• Seasonal Factor: ${scanResult.marketInsights.seasonalFactor}
+• Price Range: $${scanResult.marketInsights.priceRange.min} - $${scanResult.marketInsights.priceRange.max}
+
+AI RECOMMENDATIONS:
+${scanResult.suggestions.map(suggestion => `• ${suggestion}`).join('\n')}
+
+Price: $${scanResult.estimatedValue}
+Condition: ${scanResult.condition}
+Category: ${scanResult.category}`;
+                        
+                        // Copy to clipboard
+                        navigator.clipboard.writeText(listingDetails);
+                        
+                        toast({
+                          title: "Listing Details Copied! 📋",
+                          description: "All listing information copied to clipboard. Ready to paste into eBay!",
+                        });
+                      }}
+                      variant="ghost"
+                      size="sm"
+                      className="border-dashed border-2 border-gray-300 text-gray-600 hover:border-gray-400 hover:text-gray-700"
+                    >
+                      📋 Copy Details
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {/* Saved Scans Section */}
+        {savedScans.length > 0 && (
+          <div className="space-y-6 mt-12">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-foreground">Saved Scans</h2>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // Open eBay in new tab for bulk listing
+                    window.open('https://www.ebay.com/sh/lst/active', '_blank');
+                    
+                    toast({
+                      title: "eBay Seller Hub Opened! 🚀",
+                      description: "You can now list multiple items from your saved scans.",
+                    });
+                  }}
+                  className="border-blue-500 text-blue-600 hover:bg-blue-50"
+                >
+                  <svg className="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  eBay Seller Hub
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const dataStr = JSON.stringify(savedScans, null, 2);
+                    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(dataBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `scan-results-${new Date().toISOString().split('T')[0]}.json`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    
+                    toast({
+                      title: "Data Exported! 📊",
+                      description: "Your scan results have been downloaded as JSON.",
+                    });
+                  }}
+                >
+                  Export Data
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowSavedScans(!showSavedScans)}
+                >
+                  {showSavedScans ? 'Hide' : 'Show'} Saved Scans ({savedScans.length})
+                </Button>
+              </div>
+            </div>
+            
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="text-center p-4">
+                <div className="text-2xl font-bold text-primary">
+                  ${savedScans.reduce((sum, scan) => sum + scan.estimatedValue, 0).toFixed(0)}
+                </div>
+                <div className="text-sm text-muted-foreground">Total Value</div>
+              </Card>
+              <Card className="text-center p-4">
+                <div className="text-2xl font-bold text-blue-600">
+                  {savedScans.filter(scan => scan.condition === 'Excellent').length}
+                </div>
+                <div className="text-sm text-muted-foreground">Excellent Items</div>
+              </Card>
+              <Card className="text-center p-4">
+                <div className="text-2xl font-bold text-green-600">
+                  {savedScans.filter(scan => scan.marketInsights.demandLevel === 'High').length}
+                </div>
+                <div className="text-sm text-muted-foreground">High Demand</div>
+              </Card>
+              <Card className="text-center p-4">
+                <div className="text-2xl font-bold text-purple-600">
+                  {savedScans.length}
+                </div>
+                <div className="text-sm text-muted-foreground">Total Scans</div>
+              </Card>
+            </div>
+            
+            {showSavedScans && (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {savedScans.map((savedScan) => (
+                  <Card key={savedScan.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg">{savedScan.category}</CardTitle>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteSavedScan(savedScan.id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          ×
+                        </Button>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {savedScan.brand} • {savedScan.subcategory}
+                      </p>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-4">
+                      {/* Image */}
+                      <div className="relative">
+                        <img
+                          src={savedScan.image}
+                          alt={savedScan.category}
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                        <Badge className={`absolute top-2 right-2 ${getConditionColor(savedScan.condition)}`}>
+                          {savedScan.condition}
+                        </Badge>
+                      </div>
+                      
+                      {/* Key Info */}
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Estimated Value:</span>
+                          <span className="text-lg font-bold text-primary">
+                            ${savedScan.estimatedValue}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Confidence:</span>
+                          <span className="text-sm font-medium">
+                            {savedScan.confidence.toFixed(1)}%
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Material:</span>
+                          <span className="text-sm font-medium">{savedScan.material}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Market Insights */}
+                      <div className="bg-muted/50 rounded-lg p-3">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-muted-foreground">Demand:</span>
+                          <Badge variant={savedScan.marketInsights.demandLevel === 'High' ? 'default' : 'secondary'} className="text-xs">
+                            {savedScan.marketInsights.demandLevel}
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Price Range: ${savedScan.marketInsights.priceRange.min} - ${savedScan.marketInsights.priceRange.max}
+                        </div>
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-3 border-t">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 text-xs border-orange-500 text-orange-600 hover:bg-orange-50"
+                          onClick={() => {
+                            // Create comprehensive listing template for eBay
+                            const title = `${savedScan.brand} ${savedScan.category} - ${savedScan.condition} Condition`;
+                            const description = `${savedScan.brand} ${savedScan.subcategory} in ${savedScan.condition.toLowerCase()} condition.
+
+MATERIAL: ${savedScan.material}
+CONDITION: ${savedScan.condition} (${savedScan.confidence.toFixed(1)}% confidence)
+AI ANALYSIS: ${savedScan.conditionDetails.overallState}
+
+DETAILED ASSESSMENT:
+• Fabric Quality: ${savedScan.conditionDetails.fabricQuality}
+• Wear Patterns: ${savedScan.conditionDetails.wearPatterns}
+• Stains: ${savedScan.conditionDetails.stains}
+
+MARKET INSIGHTS:
+• Demand Level: ${savedScan.marketInsights.demandLevel}
+• Seasonal Factor: ${savedScan.marketInsights.seasonalFactor}
+• Price Range: $${savedScan.marketInsights.priceRange.min} - $${savedScan.marketInsights.priceRange.max}
+
+AI RECOMMENDATIONS:
+${savedScan.suggestions.map(suggestion => `• ${suggestion}`).join('\n')}
+
+Estimated Value: $${savedScan.estimatedValue}`;
+                            
+                            // Copy listing details to clipboard
+                            navigator.clipboard.writeText(`Title: ${title}\n\nDescription:\n${description}\n\nPrice: $${savedScan.estimatedValue}\nCondition: ${savedScan.condition}\nCategory: ${savedScan.category}`);
+                            
+                            // Open eBay listing creation page
+                            window.open('https://www.ebay.com/sh/lst/active?action=add', '_blank');
+                            
+                            toast({
+                              title: "eBay Listing Template Copied! 📋",
+                              description: "Listing details copied to clipboard. eBay Create Listing page opened in new tab.",
+                            });
+                          }}
+                        >
+                          <svg className="h-3 w-3 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.1 4.8c-.6 0-1.1.2-1.5.6L9.3 12.7l-1.1-1.1c-.4-.4-.9-.6-1.5-.6s-1.1.2-1.5.6c-.4.4-.6.9-.6 1.5s.2 1.1.6 1.5l3.2 3.2c.4.4.9.6 1.5.6s1.1-.2 1.5-.6l8.3-8.3c.4-.4.6-.9.6-1.5s-.2-1.1-.6-1.5c-.4-.4-.9-.6-1.5-.6z"/>
+                          </svg>
+                          Copy & List
+                        </Button>
+                      </div>
+                      
+                      {/* Save Date */}
+                      <div className="text-xs text-muted-foreground text-center pt-2">
+                        Saved on {savedScan.savedAt.toLocaleDateString()} at {savedScan.savedAt.toLocaleTimeString()}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

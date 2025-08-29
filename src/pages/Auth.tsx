@@ -1,12 +1,12 @@
 import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate, Link, useLocation } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Leaf } from "lucide-react"
+import { Loader2, Leaf, Info } from "lucide-react"
 import { useEffect } from "react"
 
 const Auth = () => {
@@ -20,6 +20,9 @@ const Auth = () => {
   
   const { signIn, signUp, user, loading } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const returnMessage = location.state?.message
+  const returnTo = location.state?.returnTo || "/"
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -50,7 +53,7 @@ const Auth = () => {
       if (result.error) {
         setError(result.error.message)
       } else if (!isSignUp) {
-        navigate("/")
+        navigate(returnTo)
       }
     } catch (err) {
       setError("An unexpected error occurred")
@@ -93,6 +96,12 @@ const Auth = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {returnMessage && (
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>{returnMessage}</AlertDescription>
+                </Alert>
+              )}
               {error && (
                 <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
